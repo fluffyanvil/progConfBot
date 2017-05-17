@@ -5,26 +5,44 @@ var config = require('../config');
 const TeleBot = require('telebot');
 const bot = new TeleBot(config.telegram.token);
 var mongo = require('./mongo');
+var moment = require('moment');
 
 var telegram = function(){
     bot.on('text', function(msg) {
+        console.log(msg);
         mongo.Message.create({
-            received: Date.now(),
+            received: moment.utc(Date.now()),
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username,
             totalWords: msg.text.split(" ").length,
-            text: msg.text
+            text: msg.text,
+            chat: msg.chat.username
             },
         function (err, item){
             if (err) console.log(err);
         });
-    });
 
+        mongo.User.find({id : msg.from.id}, function(err, doc){
+            if (doc.length){
+                console.log("user %s already exists", msg.from.id);
+            } else {
+                mongo.User.create({
+                        id: msg.from.id,
+                        username: msg.from.username,
+                        firstName: msg.from.first_name,
+                        lastName: msg.from.last_name,
+                    },
+                    function (err, item){
+                        if (err) console.log(err);
+                    });
+            }
+        });
+    });
 
     bot.on('sticker', function(msg){
         mongo.Sticker.create({
-            received: Date.now(),
+            received: moment.utc(Date.now()),
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username
@@ -105,20 +123,6 @@ var telegram = function(){
                     var sumValues = doc.map(totalWords).reduce(sum);
                     msg.reply.text(sumValues + " total words from " + username);
                 }
-            });
-    });
-
-    bot.on(/(^\/msst$)/, function(msg){
-        mongo.Message
-            .where('chatId').equals(msg.chat.id)
-            .where('received').gt(Date.now().getDate()).lt(Date.now())
-            .count({},
-            function (err, count){
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                msg.reply.text(count + " total message(s)")
             });
     });
 

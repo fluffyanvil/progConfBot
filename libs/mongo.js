@@ -20,7 +20,8 @@ var messageSchema = mongoose.Schema({
     userId: String,
     username: String,
     totalWords: { type: Number, default: 0},
-    text: String
+    text: String,
+    chat: String
 });
 
 var stickerSchema = mongoose.Schema({
@@ -28,11 +29,20 @@ var stickerSchema = mongoose.Schema({
     chatId: String,
     userId: String,
     username: String
+});
+
+var userSchema = mongoose.Schema({
+    id: Number,
+    username: String,
+    firstName: String,
+    lastName: String
 })
 
 var Message = mongoose.model('Message', messageSchema);
 var Sticker = mongoose.model('Sticker', stickerSchema);
+var User = mongoose.model('User', userSchema);
 
 
 module.exports.Message = Message;
 module.exports.Sticker = Sticker;
+module.exports.User = User;
