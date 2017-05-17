@@ -4,6 +4,7 @@
 var packageInfo = require('./../package.json');
 var express = require('express');
 var app = express();
+var mongo = require('./mongo');
 
 app.get('/', function (req, res) {
     res.json({ version: packageInfo.version });
@@ -14,4 +15,14 @@ var server = app.listen(process.env.PORT, function () {
     var port = server.address().port;
 
     console.log('Web server started at http://%s:%s', host, port);
+});
+
+app.get('/api/messages', function(req,res){
+    mongo.Message.find({}, function (err, doc){
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.json(doc);
+    });
 });
