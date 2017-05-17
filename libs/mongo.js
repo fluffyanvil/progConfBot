@@ -15,12 +15,16 @@ db.once('open', function callback () {
 });
 
 var messageSchema = mongoose.Schema({
+    received: Date,
+    chatId: String,
     userId: String,
     username: String,
     totalWords: { type: Number, default: 0}
 });
 
 var stickerSchema = mongoose.Schema({
+    received: Date,
+    chatId: String,
     userId: String,
     username: String
 })
