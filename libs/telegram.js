@@ -103,6 +103,20 @@ var telegram = function(){
             });
     });
 
+    bot.on(/(^\/msst$)/, function(msg){
+        mongo.Message
+            .where('chatId').equals(msg.chat.id)
+            .where('received').gt(Date.now().getDate()).lt(Date.now())
+            .count({},
+            function (err, count){
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                msg.reply.text(count + " total message(s)")
+            });
+    });
+
     function totalWords(item){
         return item.totalWords;
     }
