@@ -11,7 +11,7 @@ var telegram = function(){
     bot.on('text', function(msg) {
         console.log(msg);
         mongo.Message.create({
-            received: moment.utc(Date.now()),
+            received: moment.utc(),
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username,
@@ -42,7 +42,7 @@ var telegram = function(){
 
     bot.on('sticker', function(msg){
         mongo.Sticker.create({
-            received: moment.utc(Date.now()),
+            received: moment.utc(),
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username
