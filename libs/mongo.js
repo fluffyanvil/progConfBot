@@ -19,7 +19,8 @@ var messageSchema = mongoose.Schema({
     chatId: String,
     userId: String,
     username: String,
-    totalWords: { type: Number, default: 0}
+    totalWords: { type: Number, default: 0},
+    text: String
 });
 
 var stickerSchema = mongoose.Schema({

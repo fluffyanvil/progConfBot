@@ -13,7 +13,8 @@ var telegram = function(){
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username,
-            totalWords: msg.text.split(" ").length
+            totalWords: msg.text.split(" ").length,
+            text: msg.text
             },
         function (err, item){
             if (err) console.log(err);
