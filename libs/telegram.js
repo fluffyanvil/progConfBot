@@ -51,7 +51,9 @@ var telegram = function(){
     });
 
     bot.on(/(^\/mss$)/, function(msg){
-        mongo.Message.where('chatId').equals(msg.chat.id).count({},
+        mongo.Message
+            .where('chatId').equals(msg.chat.id)
+            .count({},
             function (err, count){
                 if (err) {
                     console.log(err);
@@ -62,7 +64,9 @@ var telegram = function(){
     });
 
     bot.on(/(^\/sts$)/, function(msg){
-        mongo.Sticker.count({},
+        mongo.Sticker
+            .where('chatId').equals(msg.chat.id)
+            .count({},
             function (err, count){
                 if (err) {
                     console.log(err);
