@@ -67,12 +67,19 @@ app.get('/api/users/chat/:chat', function(req,res){
     mongo.Message
         .find({})
         .where('chat').equals(req.params.chat)
-        .distinct('username')
-        .exec(function (err, doc){
+        .distinct('userId')
+        .exec(function (err, ids){
             if (err) {
                 console.log(err);
                 return;
             }
-            res.json(doc);
+            // res.json(doc);
+            mongo.User.find({id: {$in: ids}}, function(err, users){
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                res.json(users);
+            });
         });
 });
