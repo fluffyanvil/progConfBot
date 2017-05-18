@@ -43,7 +43,7 @@ app.get('/api/messages/today/:chat', function(req,res){
         });
 });
 
-app.get('/api/users/:username', function(req,res){
+app.get('/api/users/name/:username', function(req,res){
     mongo.User.findOne({username: req.params.username}, function (err, doc){
         if (err) {
             console.log(err);
@@ -51,4 +51,28 @@ app.get('/api/users/:username', function(req,res){
         }
         res.json(doc);
     });
+});
+
+app.get('/api/users/id/:id', function(req,res){
+    mongo.User.findOne({id: req.params.id}, function (err, doc){
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.json(doc);
+    });
+});
+
+app.get('/api/users/chat/:chat', function(req,res){
+    mongo.Message
+        .find({})
+        .where('chat').equals(req.params.chat)
+        .distinct('userId')
+        .exec(function (err, doc){
+            if (err) {
+                console.log(err);
+                return;
+            }
+            res.json(doc);
+        });
 });
