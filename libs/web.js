@@ -80,7 +80,7 @@ app.get('/api/stat/:id/:chat',  function(req,res){
                     console.log(err);
                     return;
                 }
-                response.count = count.length;
+                response.messages = count.length;
                 res.json(response)});
         });
 });
