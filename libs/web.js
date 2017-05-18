@@ -64,7 +64,7 @@ app.get('/api/users/id/:id', function(req,res){
 });
 
 // {id: Number, chat: String}
-app.get('/api/users/:id/:chat',  function(req,res){
+app.get('/api/stat/:id/:chat',  function(req,res){
     mongo.User.findOne({id: req.params.id}, function (err, user){
         if (err) {
             console.log(err);
