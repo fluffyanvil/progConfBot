@@ -67,7 +67,7 @@ app.get('/api/users/chat/:chat', function(req,res){
     mongo.Message
         .find({})
         .where('chat').equals(req.params.chat)
-        .distinct('userId')
+        .distinct('username')
         .exec(function (err, doc){
             if (err) {
                 console.log(err);
