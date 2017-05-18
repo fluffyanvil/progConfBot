@@ -23,20 +23,17 @@ var telegram = function(){
             if (err) console.log(err);
         });
 
-        mongo.User.find({id : msg.from.id}, function(err, doc){
-            if (doc.length){
-                console.log("user %s already exists", msg.from.id);
-            } else {
-                mongo.User.create({
-                        id: msg.from.id,
-                        username: msg.from.username,
-                        firstName: msg.from.first_name,
-                        lastName: msg.from.last_name,
-                    },
-                    function (err, item){
-                        if (err) console.log(err);
-                    });
-            }
+        mongo.User.findOneAndUpdate({
+            id : msg.from.id
+        }, {
+            id: msg.from.id,
+            username: msg.from.username,
+            firstName: msg.from.first_name,
+            lastName: msg.from.last_name
+        }, {
+            upsert:true
+        }, function (err, item){
+            if (err) console.log(err);
         });
     });
 

@@ -63,6 +63,28 @@ app.get('/api/users/id/:id', function(req,res){
     });
 });
 
+// {id: Number, chat: String}
+app.get('/api/users/:id/:chat',  function(req,res){
+    mongo.User.findOne({id: req.params.id}, function (err, user){
+        if (err) {
+            console.log(err);
+            return;
+        }
+        var response = {};
+        response.user = user;
+        mongo.Message.find({})
+            .where('userId').equals(req.params.id)
+            .where('chat').equals(req.params.chat)
+            .exec(function (err, count){
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                response.count = count.length;
+                res.json(response)});
+        });
+});
+
 app.get('/api/users/chat/:chat', function(req,res){
     mongo.Message
         .find({})
