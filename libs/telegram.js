@@ -79,6 +79,21 @@ var telegram = function(){
             });
     });
 
+    bot.on(/(^\/msst$)/, function(msg){
+        var date = moment.utc().startOf('day');
+        mongo.Message
+            .count({})
+            .where('received').gt(date)
+            .where('chatId').equals(msg.chat.id)
+            .exec(function (err, doc){
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                msg.reply.text(doc + " total message(s) today")
+            });
+    });
+
     bot.on(/(^\/sts$)/, function(msg){
         mongo.Sticker
             .where('chatId').equals(msg.chat.id)
