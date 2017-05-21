@@ -80,10 +80,12 @@ var telegram = function(){
     });
 
     bot.on(/(^\/msst$)/, function(msg){
+        var offset = moment.unix(msg.date).utcOffset();
         var date = moment.utc().startOf('day');
+        var newDate = moment(date).add(-1 * offset, 'm');
         mongo.Message
             .count({})
-            .where('received').gt(date)
+            .where('received').gt(newDate)
             .where('chatId').equals(msg.chat.id)
             .exec(function (err, doc){
                 if (err) {

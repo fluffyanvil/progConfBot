@@ -29,10 +29,12 @@ app.get('/api/messages/:chat', function(req,res){
 });
 
 app.get('/api/messages/today/:chat', function(req,res){
+    var offset = moment.unix(msg.date).utcOffset();
     var date = moment.utc().startOf('day');
+    var newDate = moment(date).add(-1 * offset, 'm');
     mongo.Message
         .find({})
-        .where('received').gt(date)
+        .where('received').gt(newDate)
         .where('chat').equals(req.params.chat)
         .exec(function (err, doc){
             if (err) {
