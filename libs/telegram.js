@@ -168,12 +168,11 @@ var telegram = function(){
             if (err) {
                 console.log(err);
             } else {
-                var reply = "top 3 users:\n\r";
+                var reply = ["top 3 users:"];
                 result.forEach(function(item, i, arr) {
-                    reply.concat(("%s : %s messages\n\r", item.username, item.count));
+                    reply.push(`${item.username} : ${item.count}`);
                 });
-                console.log(reply);
-                msg.reply.text(reply)
+                msg.reply.text(reply.join("\r\n"))
             }
         });
     });
