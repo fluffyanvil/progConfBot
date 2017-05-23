@@ -172,7 +172,9 @@ var telegram = function(){
                 result.forEach(function(item, i, arr) {
                     reply.push(`${item.username} : ${item.count}`);
                 });
-                msg.reply.text(reply.join("\r\n"))
+                var ans = reply.join("\r\n");
+                console.log(ans);
+                msg.reply.text(ans);
             }
         });
     });
