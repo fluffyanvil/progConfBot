@@ -140,6 +140,44 @@ var telegram = function(){
             });
     });
 
+    bot.on(/(^\/top3$)/, function(msg){
+        mongo.Message.aggregate([
+            { $match : { chatId : msg.chat.id.toString() } },
+            {
+                $group: {
+                    _id: '$userId',
+                    count: {$sum: 1},
+                    username : { $first: '$username' }
+                }
+            },
+            {
+                $sort: {
+                    "count": -1
+                }
+            },
+            {
+                $limit: 3
+            },
+            {
+                $project : {
+                    username : 1,
+                    count : 1
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                var reply = "top 3 users:\n\r";
+                result.forEach(function(item, i, arr) {
+                    reply.concat(("%s : %s messages\n\r", item.username, item.count));
+                });
+                console.log(reply);
+                msg.reply.text(reply)
+            }
+        });
+    });
+
     function totalWords(item){
         return item.totalWords;
     }

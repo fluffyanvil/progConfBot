@@ -98,4 +98,37 @@ module.exports = function(app){
                 });
             });
     });
+
+    app.get('/api/messages/top3/:chat', function(req,res){
+        mongo.Message.aggregate([
+            { $match : { chat : req.params.chat } },
+            {
+                $group: {
+                    _id: '$userId',
+                    count: {$sum: 1},
+                    username : { $first: '$username' }
+                }
+            },
+            {
+                $sort: {
+                    "count": -1
+                }
+            },
+            {
+                $limit: 3
+            },
+            {
+                $project : {
+                    username : 1,
+                    count : 1
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.json(result);
+            }
+        });
+    });
 }
