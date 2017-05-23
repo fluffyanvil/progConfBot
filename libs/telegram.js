@@ -170,7 +170,7 @@ var telegram = function(){
             } else {
                 var reply = ["top 3 users:"];
                 result.forEach(function(item, i, arr) {
-                    reply.push(`${item.username} : ${item.count}`);
+                    reply.push(`@${item.username} : ${item.count} messages`);
                 });
                 var ans = reply.join("\r\n");
                 console.log(ans);
