@@ -6,7 +6,7 @@ var moment = require('moment');
 var packageInfo = require('./../package.json');
 
 module.exports = function(app){
-
+    app.set('view engine', 'pug');
     app.get('/', function (req, res) {
         res.json({ version: packageInfo.version });
     });
@@ -130,5 +130,19 @@ module.exports = function(app){
                 res.json(result);
             }
         });
+    });
+
+    app.get('/api/messages/stat/:chat', function(req,res){
+        mongo.Stat(req.params.chat, function(result, error){
+            console.log(result);
+            res.json(result);
+        });
+    });
+
+    app.get('/stat/:chat', function(req,res){
+        mongo.Stat(req.params.chat, function(result, error){
+            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, data: JSON.stringify(result)})
+        });
+
     });
 }
