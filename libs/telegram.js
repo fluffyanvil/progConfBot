@@ -9,32 +9,7 @@ var moment = require('moment');
 
 var telegram = function(){
     bot.on('text', function(msg) {
-        console.log(msg);
-        mongo.Message.create({
-            received: moment.utc(),
-            chatId: msg.chat.id,
-            userId: msg.from.id,
-            username: msg.from.username,
-            totalWords: msg.text.split(" ").length,
-            text: msg.text,
-            chat: msg.chat.username
-            },
-        function (err, item){
-            if (err) console.log(err);
-        });
-
-        mongo.User.findOneAndUpdate({
-            id : msg.from.id
-        }, {
-            id: msg.from.id,
-            username: msg.from.username,
-            firstName: msg.from.first_name,
-            lastName: msg.from.last_name
-        }, {
-            upsert:true
-        }, function (err, item){
-            if (err) console.log(err);
-        });
+        mongo.OnNewMessage(msg);
     });
 
     bot.on('sticker', function(msg){

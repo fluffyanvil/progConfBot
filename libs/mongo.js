@@ -3,6 +3,7 @@
  */
 var mongoose    = require('mongoose');
 var config      = require('../config')
+var moment      = require('moment');
 
 mongoose.connect(config.mongo.url);
 var db = mongoose.connection;
@@ -76,6 +77,65 @@ module.exports = {
                 //var data = [{x: result.map(function(item){return item.day;}), y: result.map(function(item){return item.count;})}];
             }
         })
+    },
+    TopByChatName: function (chat, callback) {
+        Message.aggregate([
+            { $match : { chat : chat } },
+            {
+                $group: {
+                    _id: '$userId',
+                    count: {$sum: 1},
+                    username : { $first: '$username' }
+                }
+            },
+            {
+                $sort: {
+                    "count": -1
+                }
+            },
+            {
+                $limit: 3
+            },
+            {
+                $project : {
+                    username : 1,
+                    count : 1
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                callback(null, err)
+            } else {
+                callback(result, null)
+            }
+        });
+    },
+    OnNewMessage: function (msg){
+        Message.create({
+                received: moment.utc(),
+                chatId: msg.chat.id,
+                userId: msg.from.id,
+                username: msg.from.username,
+                totalWords: msg.text.split(" ").length,
+                text: msg.text,
+                chat: msg.chat.username
+            },
+            function (err, item){
+                if (err) console.log(err);
+            });
+
+        User.findOneAndUpdate({
+            id : msg.from.id
+        }, {
+            id: msg.from.id,
+            username: msg.from.username,
+            firstName: msg.from.first_name,
+            lastName: msg.from.last_name
+        }, {
+            upsert:true
+        }, function (err, item){
+            if (err) console.log(err);
+        });
     }
 };
 

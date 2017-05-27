@@ -100,36 +100,12 @@ module.exports = function(app){
     });
 
     app.get('/api/messages/top3/:chat', function(req,res){
-        mongo.Message.aggregate([
-            { $match : { chat : req.params.chat } },
-            {
-                $group: {
-                    _id: '$userId',
-                    count: {$sum: 1},
-                    username : { $first: '$username' }
-                }
-            },
-            {
-                $sort: {
-                    "count": -1
-                }
-            },
-            {
-                $limit: 3
-            },
-            {
-                $project : {
-                    username : 1,
-                    count : 1
-                }
-            }
-        ], function (err, result) {
+        mongo.TopByChatName(req.params.chat, function(result, err){
             if (err) {
                 console.log(err);
-            } else {
-                res.json(result);
             }
-        });
+            res.json(result);
+        })
     });
 
     app.get('/api/messages/stat/:chat', function(req,res){
@@ -143,6 +119,5 @@ module.exports = function(app){
         mongo.Stat(req.params.chat, function(result, error){
             res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, data: JSON.stringify(result)})
         });
-
     });
 }
