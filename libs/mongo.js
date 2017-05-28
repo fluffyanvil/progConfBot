@@ -159,7 +159,6 @@ module.exports = {
             }
         });
     },
-
     TopByChatId: function (chatId, callback) {
         Message.aggregate([
             {
@@ -200,6 +199,31 @@ module.exports = {
                 })
             }
         });
+    },
+    TotalByChatId: function (chatId, callback){
+        Message.count({chatId : chatId}).exec(function(err, count){
+            if (err){
+                callback(null, err);
+            }
+            else {
+                callback({total: count}, null)
+            }
+        });
+    },
+    TotalTodayByChatId: function (chatId, callback){
+        var date = moment.utc().startOf('day');
+        Message
+            .count({})
+            .where('received').gt(date)
+            .where('chatId').equals(chatId)
+            .exec(function (err, count){
+                if (err) {
+                    callback(null, err)
+                }
+                else {
+                    callback({total: count}, null)
+                }
+            });
     },
     OnNewMessage: function (msg){
         Message.create({

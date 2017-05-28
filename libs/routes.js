@@ -115,13 +115,15 @@ module.exports = function(app){
         });
     });
 
-    app.get('/api/chart/:chatId', function(req,res){
+    app.get('/stat/chat/:chatId', function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
         mongo.StatByChatId(req.params.chatId, function(stat, error){
-            console.log(stat);
             mongo.TopByChatId(req.params.chatId, function(pie, error){
-                console.log(pie);
-                res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, stat_enhropy: stat, stat_users: pie});
+                mongo.TotalByChatId(req.params.chatId, function(allTotal, error){
+                    mongo.TotalTodayByChatId(req.params.chatId, function(dailyTotal, error){
+                        res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, stat_enhropy: stat, stat_users: pie, allTotal: allTotal, dailyTotal: dailyTotal});
+                    });
+                });
             });
         });
     });

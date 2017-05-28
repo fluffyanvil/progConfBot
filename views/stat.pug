@@ -8,6 +8,9 @@ html
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js")
         script#stat_enhropy(type='application/json')= JSON.stringify(stat_enhropy)
         script#stat_users(type='application/json')= JSON.stringify(stat_users)
+        script#allTotal(type='application/json')= JSON.stringify(allTotal)
+        script#dailyTotal(type='application/json')= JSON.stringify(dailyTotal)
+
         script.
             function getRandomColor() {
                 var letters = '0123456789ABCDEF'.split('');
@@ -18,6 +21,9 @@ html
                 return color;
             }
     body
+        div(style="display: block; width: 840px; height: 100px;")
+            h1= `Total: ${allTotal.total}`
+            h2= `Today: ${dailyTotal.total}`
         div(style="display: block; width: 840px; height: 420px;")
             canvas(id="myChart")
         div(style="display: block; width: 900px; height: 420px;")
