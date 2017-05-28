@@ -25,6 +25,11 @@ var messageSchema = mongoose.Schema({
     chat: String
 });
 
+var chatSchema = mongoose.Schema({
+    id: String,
+    title: String
+});
+
 var stickerSchema = mongoose.Schema({
     received: Date,
     chatId: String,
@@ -42,12 +47,14 @@ var userSchema = mongoose.Schema({
 var Message = mongoose.model('Message', messageSchema);
 var Sticker = mongoose.model('Sticker', stickerSchema);
 var User = mongoose.model('User', userSchema);
+var Chat = mongoose.model('Chat', chatSchema);
 
 
 module.exports = {
     Message: Message,
     User: User,
     Sticker: Sticker,
+    Chat: Chat,
     StatByChatName: function (chat, callback){
         Message.aggregate([
             { $match : { chat : chat } },
@@ -103,7 +110,16 @@ module.exports = {
             if (err) {
 
             } else {
-                callback(result, null);
+                Chat.findOne({id: chatId}, function(e, r){
+                    if (e) {
+
+                    }
+                    else{
+                        callback({data: result, chatname: r.title}, null);
+                    }
+
+                })
+
                 //var data = [{x: result.map(function(item){return item.day;}), y: result.map(function(item){return item.count;})}];
             }
         })
@@ -153,6 +169,17 @@ module.exports = {
             function (err, item){
                 if (err) console.log(err);
             });
+
+        Chat.findOneAndUpdate({
+            id: msg.chat.id.toString()
+        }, {
+            id: msg.chat.id.toString(),
+            title: msg.chat.title
+        }, {
+            upsert:true
+        }, function (err, item){
+            if (err) console.log(err);
+        });
 
         User.findOneAndUpdate({
             id : msg.from.id

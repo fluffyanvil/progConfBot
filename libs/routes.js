@@ -117,7 +117,7 @@ module.exports = function(app){
 
     app.get('/api/chart/:chatId', function(req,res){
         mongo.StatByChatId(req.params.chatId.toString(), function(result, error){
-            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, chatname: req.params.chatId,  chartdata: result})
+            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, chatname: result.chatname,  chartdata: result.data})
         });
     });
 }
