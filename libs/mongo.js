@@ -17,8 +17,8 @@ db.once('open', function callback () {
 
 var messageSchema = mongoose.Schema({
     received: Date,
-    chatId: String,
-    userId: String,
+    chatId: Number,
+    userId: Number,
     username: String,
     totalWords: { type: Number, default: 0},
     text: String,
@@ -26,14 +26,14 @@ var messageSchema = mongoose.Schema({
 });
 
 var chatSchema = mongoose.Schema({
-    id: String,
+    id: Number,
     title: String
 });
 
 var stickerSchema = mongoose.Schema({
     received: Date,
-    chatId: String,
-    userId: String,
+    chatId: Number,
+    userId: Number,
     username: String
 });
 
@@ -81,13 +81,16 @@ module.exports = {
 
             } else {
                 callback(result, null);
-                //var data = [{x: result.map(function(item){return item.day;}), y: result.map(function(item){return item.count;})}];
             }
         })
     },
     StatByChatId: function (chatId, callback){
         Message.aggregate([
-            { $match : { chatId : chatId } },
+            {
+                $match : {
+                    chatId : chatId
+                }
+            },
             {
                 $group: {
                     _id: {$dayOfYear: '$received'},
@@ -115,7 +118,7 @@ module.exports = {
 
                     }
                     else{
-                        callback({data: result, chatname: r.title}, null);
+                        callback({data: result, chatname: r ? r.title : null}, null);
                     }
 
                 })
@@ -156,9 +159,14 @@ module.exports = {
             }
         });
     },
+
     TopByChatId: function (chatId, callback) {
         Message.aggregate([
-            { $match : { chatId : chatId } },
+            {
+                $match : {
+                    chatId : chatId
+                }
+            },
             {
                 $group: {
                     _id: '$userId',
@@ -172,14 +180,11 @@ module.exports = {
                 }
             },
             {
-                $limit: 3
-            },
-            {
                 $project : {
                     username : 1,
                     count : 1
                 }
-            }
+            },
         ], function (err, result) {
             if (err) {
                 callback(null, err)
@@ -189,7 +194,8 @@ module.exports = {
 
                     }
                     else{
-                        callback({data: result, chatname: r.title}, null);
+
+                        callback({data: result, chatname: r ? r.title : null}, null);
                     }
                 })
             }
@@ -210,9 +216,9 @@ module.exports = {
             });
 
         Chat.findOneAndUpdate({
-            id: msg.chat.id.toString()
+            id: msg.chat.id
         }, {
-            id: msg.chat.id.toString(),
+            id: msg.chat.id,
             title: msg.chat.title
         }, {
             upsert:true

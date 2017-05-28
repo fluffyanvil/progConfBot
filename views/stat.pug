@@ -4,30 +4,34 @@
 html
     head
         title= title
-        style(type="text/css").
-            .line {
-                fill: none;
-                stroke: steelblue;
-                stroke-width: 2px;
-            }
+
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js")
-        script#chartdata(type='application/json')= JSON.stringify(chartdata)
-        script#pie(type='application/json')= JSON.stringify(pie)
+        script#stat_enhropy(type='application/json')= JSON.stringify(stat_enhropy)
+        script#stat_users(type='application/json')= JSON.stringify(stat_users)
+        script.
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF'.split('');
+                var color = '#';
+                for (var i = 0; i < 6; i++ ) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
     body
         div(style="display: block; width: 840px; height: 420px;")
             canvas(id="myChart")
-        div(style="display: block; width: 640px; height: 420px;")
+        div(style="display: block; width: 900px; height: 420px;")
             canvas(id="myPie")
 
         script.
-            var data  = !{JSON.stringify(chartdata)};
+            var data  = !{JSON.stringify(stat_enhropy.data)};
             var ctx = document.getElementById("myChart").getContext('2d');
             var lineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.map(function(item){return item.day;}),
                     datasets: [{
-                        label: 'Messages/day in ' + '!{chatname}',
+                        label: 'Messages/day in !{stat_enhropy.chatname}',
                         data: data.map(function(item){return item.count;}),
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255,99,132,1)',
@@ -45,30 +49,23 @@ html
                 }
             });
 
-            var pieData = !{JSON.stringify(pie.data)};
+            var pieData = !{JSON.stringify(stat_users.data)};
             var ctxPie = document.getElementById("myPie").getContext('2d');
-                        var lineChart = new Chart(ctxPie, {
-                            type: 'pie',
-                            data: {
-                            labels: pieData.map(function(item){return item.username;}),
-                                datasets: [{
-                                    data: pieData.map(function(item){return item.count;}),
-                                    backgroundColor: [
-                                            "#2ecc71",
-                                            "#3498db",
-                                            "#95a5a6",
-                                            "#9b59b6",
-                                            "#f1c40f",
-                                            "#e74c3c",
-                                            "#34495e"
-                                          ]
-                                }]
-                            },
-                            options: {
-                            title: {
-                                display: true,
-                                text: 'Top 3 users in ' + '!{chatname}'
-                              }
-                            }
-                        });
+            var lineChart = new Chart(ctxPie, {
+                type: 'horizontalBar',
+                data: {
+                labels: pieData.map(function(item){return item.username;}),
+                    datasets: [{
+                        label: 'Messages by users in !{stat_enhropy.chatname}',
+                        data: pieData.map(function(item){return item.count;}),
+                        backgroundColor: pieData.map(function(item){return getRandomColor();})
+                    }]
+                },
+                options: {
+                    title: {
+                        display: false,
+                        text: '!{stat_enhropy.chatname}'
+                     }
+                },
+            });
 
