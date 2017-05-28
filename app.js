@@ -4,5 +4,5 @@
 
 require('./libs/web')
 
-//var telegram = require('./libs/telegram')
-//telegram.Telegram();
+var telegram = require('./libs/telegram')
+telegram.Telegram();
