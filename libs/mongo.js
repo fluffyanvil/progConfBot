@@ -156,6 +156,45 @@ module.exports = {
             }
         });
     },
+    TopByChatId: function (chatId, callback) {
+        Message.aggregate([
+            { $match : { chatId : chatId } },
+            {
+                $group: {
+                    _id: '$userId',
+                    count: {$sum: 1},
+                    username : { $first: '$username' }
+                }
+            },
+            {
+                $sort: {
+                    "count": -1
+                }
+            },
+            {
+                $limit: 3
+            },
+            {
+                $project : {
+                    username : 1,
+                    count : 1
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                callback(null, err)
+            } else {
+                Chat.findOne({id: chatId}, function(e, r){
+                    if (e) {
+
+                    }
+                    else{
+                        callback({data: result, chatname: r.title}, null);
+                    }
+                })
+            }
+        });
+    },
     OnNewMessage: function (msg){
         Message.create({
                 received: moment.utc(),

@@ -116,8 +116,16 @@ module.exports = function(app){
     });
 
     app.get('/api/chart/:chatId', function(req,res){
-        mongo.StatByChatId(req.params.chatId.toString(), function(result, error){
-            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, chatname: result.chatname,  chartdata: result.data})
+        var stat = {};
+        var pie = {};
+        mongo.StatByChatId(req.params.chatId.toString(), function(stat, error){
+            mongo.TopByChatId(req.params.chatId.toString(), function(pie, error){
+                res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, chatname: stat.chatname,  chartdata: stat.data, pie: pie});
+            });
         });
+
+
+
+
     });
 }

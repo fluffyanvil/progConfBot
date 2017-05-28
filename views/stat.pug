@@ -12,14 +12,17 @@ html
             }
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js")
         script#chartdata(type='application/json')= JSON.stringify(chartdata)
+        script#pie(type='application/json')= JSON.stringify(pie)
     body
         div(style="display: block; width: 840px; height: 420px;")
             canvas(id="myChart")
+        div(style="display: block; width: 640px; height: 420px;")
+            canvas(id="myPie")
 
         script.
             var data  = !{JSON.stringify(chartdata)};
             var ctx = document.getElementById("myChart").getContext('2d');
-            var myChart = new Chart(ctx, {
+            var lineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.map(function(item){return item.day;}),
@@ -41,4 +44,31 @@ html
                     }
                 }
             });
+
+            var pieData = !{JSON.stringify(pie.data)};
+            var ctxPie = document.getElementById("myPie").getContext('2d');
+                        var lineChart = new Chart(ctxPie, {
+                            type: 'pie',
+                            data: {
+                            labels: pieData.map(function(item){return item.username;}),
+                                datasets: [{
+                                    data: pieData.map(function(item){return item.count;}),
+                                    backgroundColor: [
+                                            "#2ecc71",
+                                            "#3498db",
+                                            "#95a5a6",
+                                            "#9b59b6",
+                                            "#f1c40f",
+                                            "#e74c3c",
+                                            "#34495e"
+                                          ]
+                                }]
+                            },
+                            options: {
+                            title: {
+                                display: true,
+                                text: 'Top 3 users in ' + '!{chatname}'
+                              }
+                            }
+                        });
 
