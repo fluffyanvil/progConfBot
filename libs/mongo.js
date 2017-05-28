@@ -48,9 +48,39 @@ module.exports = {
     Message: Message,
     User: User,
     Sticker: Sticker,
-    Stat: function (chat, callback){
+    StatByChatName: function (chat, callback){
         Message.aggregate([
             { $match : { chat : chat } },
+            {
+                $group: {
+                    _id: {$dayOfYear: '$received'},
+                    count: {$sum: 1},
+                    date: {$first: '$received'}
+                }
+            },
+            {
+                $sort: {
+                    date: 1
+                }
+            },
+            {
+                $project: {
+                    count: 1,
+                    day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+
+            } else {
+                callback(result, null);
+                //var data = [{x: result.map(function(item){return item.day;}), y: result.map(function(item){return item.count;})}];
+            }
+        })
+    },
+    StatByChatId: function (chatId, callback){
+        Message.aggregate([
+            { $match : { chatId : chatId } },
             {
                 $group: {
                     _id: {$dayOfYear: '$received'},

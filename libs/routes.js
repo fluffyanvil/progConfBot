@@ -109,15 +109,15 @@ module.exports = function(app){
     });
 
     app.get('/api/messages/stat/:chat', function(req,res){
-        mongo.Stat(req.params.chat, function(result, error){
+        mongo.StatByChatName(req.params.chat, function(result, error){
             console.log(result);
             res.json(result);
         });
     });
 
-    app.get('/stat/:chat', function(req,res){
-        mongo.Stat(req.params.chat, function(result, error){
-            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, data: JSON.stringify(result)})
+    app.get('/api/chart/:chatId', function(req,res){
+        mongo.StatByChatId(req.params.chatId.toString(), function(result, error){
+            res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, chatname: req.params.chatId,  chartdata: result})
         });
     });
 }

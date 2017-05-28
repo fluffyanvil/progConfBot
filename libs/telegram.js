@@ -154,45 +154,8 @@ var telegram = function(){
         });
     });
 
-    bot.on(/(^\/plot$)/, function(msg){
-        mongo.Message.aggregate([
-            { $match : { chatId : msg.chat.id.toString() } },
-            {
-                $group: {
-                    _id: {$dayOfYear: '$received'},
-                    count: {$sum: 1},
-                    date: {$first: '$received'}
-                }
-            },
-            {
-                $sort: {
-                    date: 1
-                }
-            },
-            {
-                $project: {
-                    day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-                    count: 1,
-                }
-            }
-        ], function (err, result) {
-            if (err) {
-                console.log(err);
-            } else {
-                const D3Node = require('d3-node')
-                const d3n = new D3Node()      // initializes D3 with container element
-                d3n.createSVG(10,20).append('g') // create SVG w/ 'g' tag and width/height
-                d3n.svgString();
-                msg.reply.text(JSON.stringify(d3n.svgString()));
-                var data = [{
-                    x: result.map(function (item) {
-                        return item.day;
-                    }), y: result.map(function (item) {
-                        return item.count;
-                    })
-                }];
-            }
-        });
+    bot.on(/(^\/chart$)/, function(msg){
+        msg.reply.text(`http://progconfbot.herokuapp.com/api/chart/${msg.chat.id}`)
     });
 
     function totalWords(item){
