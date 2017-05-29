@@ -162,15 +162,29 @@ module.exports = {
     TopByChatId: function (chatId, callback) {
         Message.aggregate([
             {
+                $lookup:
+                    {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "id",
+                        as: "user"
+                    }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
                 $match : {
                     chatId : chatId
                 }
             },
             {
                 $group: {
-                    _id: '$userId',
+                    _id: 1,
+                    _id: '$user.id',
                     count: {$sum: 1},
-                    username : { $first: '$username' }
+                    firstName : { $first: '$user.firstName' },
+                    lastName : { $first: '$user.lastName' }
                 }
             },
             {
@@ -179,11 +193,13 @@ module.exports = {
                 }
             },
             {
-                $project : {
+                $project: {
                     username : 1,
-                    count : 1
+                    count: 1,
+                    firstName: 1,
+                    lastName: 1,
                 }
-            },
+            }
         ], function (err, result) {
             if (err) {
                 callback(null, err)
