@@ -60,7 +60,7 @@ html
             var lineChart = new Chart(ctxPie, {
                 type: 'horizontalBar',
                 data: {
-                labels: pieData.map(function(item){return `${item.firstName} ${item.lastName}` ;}),
+                labels: pieData.map(function(item){return `${item.firstName == null ? '' : item.firstName} ${item.lastName == null ? '' : item.lastName}` ;}),
                     datasets: [{
                         label: 'Messages by users in !{stat_enhropy.chatname}',
                         data: pieData.map(function(item){return item.count;}),
