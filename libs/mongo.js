@@ -229,7 +229,7 @@ module.exports = {
                     else {
                         callback({
                             messagesTotal: messagesCount,
-                            stickersCount: stickersCount
+                            stickersTotal: stickersCount
                         }, null)
                     }
                 });
