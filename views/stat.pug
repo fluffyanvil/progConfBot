@@ -9,12 +9,6 @@ html
         meta(property="og:image" content="http://progconfbot.herokuapp.com/images/bill.png")
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js")
-        script#statMessagesInChat(type='application/json')= JSON.stringify(statMessagesInChat)
-        script#statStickersInChat(type='application/json')= JSON.stringify(statStickersInChat)
-        script#statMessagesByUser(type='application/json')= JSON.stringify(statMessagesByUser)
-        script#statStickersByUser(type='application/json')= JSON.stringify(statStickersByUser)
-        script#allTotal(type='application/json')= JSON.stringify(allTotal)
-        script#dailyTotal(type='application/json')= JSON.stringify(dailyTotal)
 
         script.
             function getRandomColor() {
