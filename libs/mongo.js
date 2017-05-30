@@ -84,8 +84,51 @@ module.exports = {
             }
         })
     },
-    StatByChatId: function (chatId, callback){
+    StatMessagesByChatId: function (chatId, callback){
         Message.aggregate([
+            {
+                $match : {
+                    chatId : chatId
+                }
+            },
+            {
+                $group: {
+                    _id: {$dayOfYear: '$received'},
+                    count: {$sum: 1},
+                    date: {$first: '$received'}
+                }
+            },
+            {
+                $sort: {
+                    date: 1
+                }
+            },
+            {
+                $project: {
+                    count: 1,
+                    day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+
+            } else {
+                Chat.findOne({id: chatId}, function(e, r){
+                    if (e) {
+
+                    }
+                    else{
+                        callback({data: result, chatname: r ? r.title : null}, null);
+                    }
+
+                })
+
+                //var data = [{x: result.map(function(item){return item.day;}), y: result.map(function(item){return item.count;})}];
+            }
+        })
+    },
+    StatStickersByChatId: function (chatId, callback){
+        Sticker.aggregate([
             {
                 $match : {
                     chatId : chatId
@@ -159,7 +202,7 @@ module.exports = {
             }
         });
     },
-    TopByChatId: function (chatId, callback) {
+    TopMessagesByChatId: function (chatId, callback) {
         Message.aggregate([
             {
                 $lookup:
@@ -216,6 +259,65 @@ module.exports = {
             }
         });
     },
+
+    TopStickersByChatId: function (chatId, callback) {
+        Sticker.aggregate([
+            {
+                $lookup:
+                    {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "id",
+                        as: "user"
+                    }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $match : {
+                    chatId : chatId
+                }
+            },
+            {
+                $group: {
+                    _id: 1,
+                    _id: '$user.id',
+                    count: {$sum: 1},
+                    firstName : { $first: '$user.firstName' },
+                    lastName : { $first: '$user.lastName' }
+                }
+            },
+            {
+                $sort: {
+                    "count": -1
+                }
+            },
+            {
+                $project: {
+                    username : 1,
+                    count: 1,
+                    firstName: 1,
+                    lastName: 1,
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                callback(null, err)
+            } else {
+                Chat.findOne({id: chatId}, function(e, r){
+                    if (e) {
+
+                    }
+                    else{
+
+                        callback({data: result, chatname: r ? r.title : null}, null);
+                    }
+                })
+            }
+        });
+    },
+
     TotalByChatId: function (chatId, callback){
         Message.count({chatId : chatId}).exec(function(err, messagesCount){
             if (err){

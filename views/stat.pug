@@ -6,8 +6,10 @@ html
         title= title
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js")
-        script#stat_enhropy(type='application/json')= JSON.stringify(stat_enhropy)
-        script#stat_users(type='application/json')= JSON.stringify(stat_users)
+        script#statMessagesInChat(type='application/json')= JSON.stringify(statMessagesInChat)
+        script#statStickersInChat(type='application/json')= JSON.stringify(statStickersInChat)
+        script#statMessagesByUser(type='application/json')= JSON.stringify(statMessagesByUser)
+        script#statStickersByUser(type='application/json')= JSON.stringify(statStickersByUser)
         script#allTotal(type='application/json')= JSON.stringify(allTotal)
         script#dailyTotal(type='application/json')= JSON.stringify(dailyTotal)
 
@@ -26,20 +28,24 @@ html
             h1= `Total stickers: ${allTotal.stickersTotal}`
             h2= `Today messages: ${dailyTotal.todayMessagesTotal}`
             h2= `Today stickers: ${dailyTotal.todayStickersTotal}`
-        div(style="display: block; width: 840px; height: 420px;")
+        div(style="display: block; width: 900px; height: 420px;")
             canvas(id="myChart")
         div(style="display: block; width: 900px; height: 420px;")
+            canvas(id="myStickersChart")
+        div(style="display: block; width: 900px; height: 420px;")
             canvas(id="myPie")
+        div(style="display: block; width: 900px; height: 420px;")
+            canvas(id="myPieStickers")
 
         script.
-            var data  = !{JSON.stringify(stat_enhropy.data)};
+            var data  = !{JSON.stringify(statMessagesInChat.data)};
             var ctx = document.getElementById("myChart").getContext('2d');
             var lineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.map(function(item){return item.day;}),
                     datasets: [{
-                        label: 'Messages/day in !{stat_enhropy.chatname}',
+                        label: 'Messages/day in !{statMessagesInChat.chatname}',
                         data: data.map(function(item){return item.count;}),
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255,99,132,1)',
@@ -57,14 +63,40 @@ html
                 }
             });
 
-            var pieData = !{JSON.stringify(stat_users.data)};
+            var stickersData  = !{JSON.stringify(statStickersInChat.data)};
+            var ctxStickers = document.getElementById("myStickersChart").getContext('2d');
+            var lineChart = new Chart(ctxStickers, {
+                type: 'line',
+                data: {
+                    labels: data.map(function(item){return item.day;}),
+                    datasets: [{
+                        label: 'Messages/day in !{statStickersInChat.chatname}',
+                        data: data.map(function(item){return item.count;}),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255,99,132,1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+            var pieData = !{JSON.stringify(statMessagesByUser.data)};
             var ctxPie = document.getElementById("myPie").getContext('2d');
             var lineChart = new Chart(ctxPie, {
                 type: 'horizontalBar',
                 data: {
                 labels: pieData.map(function(item){return `${item.firstName == null ? '' : item.firstName} ${item.lastName == null ? '' : item.lastName}` ;}),
                     datasets: [{
-                        label: 'Messages by users in !{stat_enhropy.chatname}',
+                        label: 'Messages by users in !{statMessagesByUser.chatname}',
                         data: pieData.map(function(item){return item.count;}),
                         backgroundColor: pieData.map(function(item){return getRandomColor();})
                     }]
@@ -72,7 +104,27 @@ html
                 options: {
                     title: {
                         display: false,
-                        text: '!{stat_enhropy.chatname}'
+                        text: '!{statMessagesByUser.chatname}'
+                     }
+                },
+            });
+
+            var pieStickersData = !{JSON.stringify(statStickersByUser.data)};
+            var ctxPieStickers = document.getElementById("myPieStickers").getContext('2d');
+            var lineChart = new Chart(ctxPieStickers, {
+                type: 'horizontalBar',
+                data: {
+                labels: pieData.map(function(item){return `${item.firstName == null ? '' : item.firstName} ${item.lastName == null ? '' : item.lastName}` ;}),
+                    datasets: [{
+                        label: 'Messages by users in !{statStickersByUser.chatname}',
+                        data: pieData.map(function(item){return item.count;}),
+                        backgroundColor: pieData.map(function(item){return getRandomColor();})
+                    }]
+                },
+                options: {
+                    title: {
+                        display: false,
+                        text: '!{statStickersByUser.chatname}'
                      }
                 },
             });

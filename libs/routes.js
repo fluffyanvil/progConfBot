@@ -118,11 +118,24 @@ module.exports = function(app){
 
     app.get(`${config.apiStat}:chatId`, function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
-        mongo.StatByChatId(req.params.chatId, function(stat, error){
-            mongo.TopByChatId(req.params.chatId, function(pie, error){
-                mongo.TotalByChatId(req.params.chatId, function(allTimeTotalResult, error){
-                    mongo.TotalTodayByChatId(req.params.chatId, function(dailyTotalResult, error){
-                        res.render('stat', { title: 'Statistics', message: `${req.params.chat} statistics`, stat_enhropy: stat, stat_users: pie, allTotal: allTimeTotalResult, dailyTotal: dailyTotalResult});
+        mongo.StatMessagesByChatId(req.params.chatId, function(stat, error){
+            mongo.StatStickersByChatId(req.params.chatId, function(stickers, error){
+                mongo.TopMessagesByChatId(req.params.chatId, function(pie, error){
+                    mongo.TopStickersByChatId(req.params.chatId, function(stickersTop, error){
+                        mongo.TotalByChatId(req.params.chatId, function(allTimeTotalResult, error){
+                            mongo.TotalTodayByChatId(req.params.chatId, function(dailyTotalResult, error){
+                                res.render('stat', {
+                                    title: 'Statistics',
+                                    message: `${req.params.chat} statistics`,
+                                    statMessagesInChat: stat,
+                                    statMessagesByUser: pie,
+                                    allTotal: allTimeTotalResult,
+                                    dailyTotal: dailyTotalResult,
+                                    statStickersInChat: stickers,
+                                    statStickersByUser: stickersTop
+                                });
+                            });
+                        });
                     });
                 });
             });
