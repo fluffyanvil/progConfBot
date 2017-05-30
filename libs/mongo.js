@@ -5,7 +5,7 @@ var mongoose    = require('mongoose');
 var config      = require('../config')
 var moment      = require('moment');
 
-mongoose.connect(config.mongo.url);
+mongoose.connect(process.env.MONGO);
 var db = mongoose.connection;
 
 db.on('error', function (err) {

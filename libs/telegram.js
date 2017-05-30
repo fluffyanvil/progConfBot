@@ -3,7 +3,7 @@
  */
 var config = require('../config');
 const TeleBot = require('telebot');
-const bot = new TeleBot(config.telegram.token);
+const bot = new TeleBot(process.env.TELEGRAM);
 var mongo = require('./mongo');
 var moment = require('moment');
 
