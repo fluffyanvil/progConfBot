@@ -217,12 +217,22 @@ module.exports = {
         });
     },
     TotalByChatId: function (chatId, callback){
-        Message.count({chatId : chatId}).exec(function(err, count){
+        Message.count({chatId : chatId}).exec(function(err, messagesCount){
             if (err){
                 callback(null, err);
             }
             else {
-                callback({total: count}, null)
+                Sticker.count({chatId : chatId}).exec(function(err, stickersCount){
+                    if (err){
+                        callback(null, err);
+                    }
+                    else {
+                        callback({
+                            messagesTotal: messagesCount,
+                            stickersCount: stickersCount
+                        }, null)
+                    }
+                });
             }
         });
     },
@@ -232,12 +242,26 @@ module.exports = {
             .count({})
             .where('received').gt(date)
             .where('chatId').equals(chatId)
-            .exec(function (err, count){
+            .exec(function (err, todayMessagesCount){
                 if (err) {
                     callback(null, err)
                 }
                 else {
-                    callback({total: count}, null)
+                    Sticker
+                        .count({})
+                        .where('received').gt(date)
+                        .where('chatId').equals(chatId)
+                        .exec(function (err, todayStickersCount){
+                            if (err) {
+                                callback(null, err)
+                            }
+                            else {
+                                callback({
+                                    todayMessagesTotal: todayMessagesCount,
+                                    todayStickersTotal: todayStickersCount
+                                }, null)
+                            }
+                        });
                 }
             });
     },

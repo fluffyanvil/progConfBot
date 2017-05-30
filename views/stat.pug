@@ -22,8 +22,10 @@ html
             }
     body
         div(style="display: block; width: 840px; height: 100px;")
-            h1= `Total: ${allTotal.total}`
-            h2= `Today: ${dailyTotal.total}`
+            h1= `Total messages: ${allTotal.messagesTotal}`
+            h1= `Total stickers: ${allTotal.stickersCount}`
+            h2= `Today messages: ${dailyTotal.todayMessagesCount}`
+            h2= `Today stickers: ${dailyTotal.todayStickersCount}`
         div(style="display: block; width: 840px; height: 420px;")
             canvas(id="myChart")
         div(style="display: block; width: 900px; height: 420px;")
