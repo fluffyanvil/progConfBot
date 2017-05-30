@@ -14,5 +14,7 @@ config.telegram.token = "383827700:AAFwMdfp1O2tN6auJkiwWaf2TwAvk5ecC5k";
 
 config.plotly.username = "progconf";
 config.plotly.api_key = "7mjosJUdPMLs8CPguUWf";
+config.herokuUrl = "http://progconfbot.herokuapp.com";
+config.apiStat = "/stat/chat/";
 
 module.exports = config;

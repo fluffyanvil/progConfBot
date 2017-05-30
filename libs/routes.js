@@ -4,6 +4,7 @@
 var mongo = require('./mongo');
 var moment = require('moment');
 var packageInfo = require('./../package.json');
+var config = require('../config');
 
 module.exports = function(app){
     app.set('view engine', 'pug');
@@ -115,7 +116,7 @@ module.exports = function(app){
         });
     });
 
-    app.get('/stat/chat/:chatId', function(req,res){
+    app.get(`${config.apiStat}:chatId`, function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
         mongo.StatByChatId(req.params.chatId, function(stat, error){
             mongo.TopByChatId(req.params.chatId, function(pie, error){

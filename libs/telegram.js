@@ -25,7 +25,7 @@ var telegram = function(){
     });
 
     bot.on(/(^\/chart$)/, function(msg){
-        msg.reply.text(`http://progconfbot.herokuapp.com/stat/chat/${msg.chat.id}`)
+        msg.reply.text(`${config.herokuUrl}${config.apiStat}${msg.chat.id}`)
     });
 
     function totalWords(item){
