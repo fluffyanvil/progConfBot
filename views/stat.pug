@@ -68,12 +68,12 @@ html
             var lineChart = new Chart(ctxStickers, {
                 type: 'line',
                 data: {
-                    labels: data.map(function(item){return item.day;}),
+                    labels: stickersData.map(function(item){return item.day;}),
                     datasets: [{
                         label: 'Messages/day in !{statStickersInChat.chatname}',
-                        data: data.map(function(item){return item.count;}),
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255,99,132,1)',
+                        data: stickersData.map(function(item){return item.count;}),
+                        backgroundColor: 'rgba(152, 99, 132, 0.2)',
+                        borderColor: 'rgba(152,99,132,1)',
                         borderWidth: 1
                     }]
                 },
@@ -114,11 +114,11 @@ html
             var lineChart = new Chart(ctxPieStickers, {
                 type: 'horizontalBar',
                 data: {
-                labels: pieData.map(function(item){return `${item.firstName == null ? '' : item.firstName} ${item.lastName == null ? '' : item.lastName}` ;}),
+                labels: pieStickersData.map(function(item){return `${item.firstName == null ? '' : item.firstName} ${item.lastName == null ? '' : item.lastName}` ;}),
                     datasets: [{
                         label: 'Messages by users in !{statStickersByUser.chatname}',
-                        data: pieData.map(function(item){return item.count;}),
-                        backgroundColor: pieData.map(function(item){return getRandomColor();})
+                        data: pieStickersData.map(function(item){return item.count;}),
+                        backgroundColor: pieStickersData.map(function(item){return getRandomColor();})
                     }]
                 },
                 options: {
