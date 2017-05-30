@@ -132,7 +132,8 @@ module.exports = function(app){
                                     allTotal: allTimeTotalResult,
                                     dailyTotal: dailyTotalResult,
                                     statStickersInChat: stickers,
-                                    statStickersByUser: stickersTop
+                                    statStickersByUser: stickersTop,
+                                    ogUrl: `${config.herokuUrl}${config.apiStat}${req.params.chatId}`
                                 });
                             });
                         });
