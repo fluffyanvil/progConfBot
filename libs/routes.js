@@ -116,7 +116,7 @@ module.exports = function(app){
         });
     });
 
-    app.get(`${config.apiRoot}${config.apiTodayActivity}` function (req, res) {
+    app.get(`${config.apiRoot}${config.apiTodayActivity}:chatId` function (req, res) {
         req.params.chatId = parseInt(req.params.chatId);
         mongo.TotalTodayByChatId(req.params.chatId, function(result, error){
             if (error){
@@ -128,7 +128,7 @@ module.exports = function(app){
         });
     });
 
-    app.get(`${config.apiStat}`, function(req,res){
+    app.get(`${config.apiStat}:chatId`, function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
         mongo.StatMessagesByChatId(req.params.chatId, function(stat, error){
             mongo.StatStickersByChatId(req.params.chatId, function(stickers, error){
