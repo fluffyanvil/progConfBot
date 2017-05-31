@@ -383,8 +383,8 @@ module.exports = {
                                                         callback({
                                                             todayMessagesTotal: todayMessagesCount,
                                                             todayStickersTotal: todayStickersCount,
-                                                            messagesDirection: yesterdayMessagesCount > todayMessagesCount ? 1 : (yesterdayMessagesCount < todayMessagesCount ? -1 : 0),
-                                                            stickersDirection: yesterdayStickersCount > todayStickersCount ? 1 : (yesterdayStickersCount < todayStickersCount ? -1 : 0)
+                                                            messagesDirection: yesterdayMessagesCount > todayMessagesCount ? '\u2193' : (yesterdayMessagesCount < todayMessagesCount ? '\u2191' : 0),
+                                                            stickersDirection: yesterdayStickersCount > todayStickersCount ? '\u2193' : (yesterdayStickersCount < todayStickersCount ? '\u2191' : 0)
                                                         }, null)
                                                     }
                                                 });
