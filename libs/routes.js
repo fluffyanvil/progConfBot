@@ -116,7 +116,7 @@ module.exports = function(app){
         });
     });
 
-    app.get(`${config.apiRoot}${config.apiTodayActivity}:chatId` function (req, res) {
+    app.get(`${config.apiRoot}${config.apiTodayActivity}:chatId`, function (req, res) {
         req.params.chatId = parseInt(req.params.chatId);
         mongo.TotalTodayByChatId(req.params.chatId, function(result, error){
             if (error){
