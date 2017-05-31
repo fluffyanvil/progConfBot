@@ -12,12 +12,12 @@ config.plotly.api_key = "7mjosJUdPMLs8CPguUWf";
 config.herokuUrl = "http://progconfbot.herokuapp.com";
 config.apiStat = "/stat/chat/";
 config.apiRoot = "/api";
-config.apiMessagesStat = "/stat/messages/:chatId";
-config.apiStickersStat = "/stat/stickers/:chatId";
-config.apiMessagesByUserStat = "/stat/top/messages/:chatId";
-config.apiStickersByUserStat = "/stat/top/stickers/:chatId";
-config.apiTotalActivity = "/stat/total/:chatId";
-config.apiTodayActivity = "/stat/today/";
+config.apiMessagesStat = "/m/";
+config.apiStickersStat = "/s/";
+config.apiMessagesByUserStat = "/top/m/";
+config.apiStickersByUserStat = "/top/s/";
+config.apiTotalActivity = "/total/";
+config.apiTodayActivity = "/today/";
 
 
 module.exports = config;

@@ -128,6 +128,66 @@ module.exports = function(app){
         });
     });
 
+    app.get(`${config.apiRoot}${config.apiTotalActivity}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.TotalByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiRoot}${config.apiMessagesStat}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.StatMessagesByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiRoot}${config.apiStickersStat}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.StatStickersByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiRoot}${config.apiMessagesByUserStat}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.TopMessagesByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiRoot}${config.apiStickersByUserStat}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.TopStickersByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
     app.get(`${config.apiStat}:chatId`, function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
         mongo.StatMessagesByChatId(req.params.chatId, function(stat, error){
