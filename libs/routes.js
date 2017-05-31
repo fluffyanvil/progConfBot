@@ -116,7 +116,19 @@ module.exports = function(app){
         });
     });
 
-    app.get(`${config.apiStat}:chatId`, function(req,res){
+    app.get(`${config.apiRoot}${config.apiTodayMessages}` function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.TotalTodayByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiStat}`, function(req,res){
         req.params.chatId = parseInt(req.params.chatId);
         mongo.StatMessagesByChatId(req.params.chatId, function(stat, error){
             mongo.StatStickersByChatId(req.params.chatId, function(stickers, error){
