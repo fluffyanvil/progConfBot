@@ -338,8 +338,10 @@ module.exports = {
             }
         });
     },
+
     TotalTodayByChatId: function (chatId, callback){
         var date = moment.utc().startOf('day');
+        var yesterday = moment.utc().add(-1, 'days').startOf('day');
         Message
             .count({})
             .where('received').gt(date)
@@ -349,19 +351,45 @@ module.exports = {
                     callback(null, err)
                 }
                 else {
-                    Sticker
+                    Message
                         .count({})
-                        .where('received').gt(date)
+                        .where('received').gt(yesterday)
+                        .where('received').lt(date)
                         .where('chatId').equals(chatId)
-                        .exec(function (err, todayStickersCount){
+                        .exec(function (err, yesterdayMessagesCount){
                             if (err) {
                                 callback(null, err)
                             }
                             else {
-                                callback({
-                                    todayMessagesTotal: todayMessagesCount,
-                                    todayStickersTotal: todayStickersCount
-                                }, null)
+                                Sticker
+                                    .count({})
+                                    .where('received').gt(date)
+                                    .where('chatId').equals(chatId)
+                                    .exec(function (err, todayStickersCount){
+                                        if (err) {
+                                            callback(null, err)
+                                        }
+                                        else {
+                                            Sticker
+                                                .count({})
+                                                .where('received').gt(yesterday)
+                                                .where('received').lt(date)
+                                                .where('chatId').equals(chatId)
+                                                .exec(function (err, yesterdayStickersCount){
+                                                    if (err) {
+                                                        callback(null, err)
+                                                    }
+                                                    else {
+                                                        callback({
+                                                            todayMessagesTotal: todayMessagesCount,
+                                                            todayStickersTotal: todayStickersCount,
+                                                            messagesDirection: yesterdayMessagesCount > todayMessagesCount ? 1 : (yesterdayMessagesCount < todayMessagesCount ? -1 : 0),
+                                                            stickersDirection: yesterdayStickersCount > todayStickersCount ? 1 : (yesterdayStickersCount < todayStickersCount ? -1 : 0)
+                                                        }, null)
+                                                    }
+                                                });
+                                        }
+                                    });
                             }
                         });
                 }
