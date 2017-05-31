@@ -402,7 +402,7 @@ module.exports = {
                 userId: msg.from.id,
                 username: msg.from.username,
                 totalWords: msg.text.split(" ").length,
-                text: msg.text,
+                //text: msg.text,
                 chat: msg.chat.username
             },
             function (err, item){
