@@ -383,6 +383,10 @@ module.exports = {
                                                         callback({
                                                             todayMessagesTotal: todayMessagesCount,
                                                             todayStickersTotal: todayStickersCount,
+                                                            yesterdayStickersTotal: yesterdayStickersCount,
+                                                            yesterdayMessagesTotal: yesterdayMessagesCount,
+                                                            messagePercentage: Math.round((todayMessagesCount / yesterdayMessagesCount) * 100),
+                                                            stickerPercentage: Math.round((todayStickersCount / yesterdayStickersCount) * 100),
                                                             messagesDirection: yesterdayMessagesCount > todayMessagesCount ? '\u2193' : (yesterdayMessagesCount < todayMessagesCount ? '\u2191' : 0),
                                                             stickersDirection: yesterdayStickersCount > todayStickersCount ? '\u2193' : (yesterdayStickersCount < todayStickersCount ? '\u2191' : 0)
                                                         }, null)
