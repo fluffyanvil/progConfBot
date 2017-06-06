@@ -2,8 +2,10 @@
  * Created by admin on 5/17/2017.
  */
 var express = require('express');
+var cors = require('cors')
 var app = express();
 app.use(express.static('public'));
+app.use(cors());
 require('./routes')(app);
 
 var server = app.listen(process.env.PORT, function () {
