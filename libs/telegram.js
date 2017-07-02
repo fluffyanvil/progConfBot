@@ -28,12 +28,8 @@ var telegram = function(){
 
     bot.on('newChatMembers', function(msg){
         var user = msg.new_chat_member;
-        var id = msg.from.id;
-        var replyToMessage = msg.message_id;
-        var parseMode = 'html';
-        return bot.sendMessage(
-            id, `Эй, <b>${ user.first_name }</b> Язык программирования, зп, ориентация?`, {replyToMessage, parseMode}
-        );
+        var message = `Слышь, ${user.first_name}, язык программирования, зп, ориентация?`;
+        return bot.sendMessage(msg.from.id, message, { replyToMessage: msg.message_id });
     });
 
     bot.on(/(^\/chart$)/, function(msg){
