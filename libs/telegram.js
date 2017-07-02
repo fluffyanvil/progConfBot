@@ -28,9 +28,9 @@ var telegram = function(){
 
     bot.on('newChatMembers', function(msg){
         var user = msg.new_chat_member;
-        let id = msg.from.id;
-        let replyToMessage = msg.message_id;
-        let parseMode = 'html';
+        var id = msg.from.id;
+        var replyToMessage = msg.message_id;
+        var parseMode = 'html';
         return bot.sendMessage(
             id, `Эй, <b>${ user.first_name }</b> Язык программирования, зп, ориентация?`, {replyToMessage, parseMode}
         );
