@@ -27,9 +27,10 @@ var telegram = function(){
     });
 
     bot.on('newChatMembers', function(msg){
+        console.log(msg);
         var user = msg.new_chat_member;
-        var message = `Слышь, ${user.first_name}, язык программирования, зп, ориентация?`;
-        msg.reply.text(message);
+        var message = `Слышь, [${ user.first_name } ${ user.last_name }](mention:${user.id}), язык программирования, зп, ориентация?`;
+        return bot.sendMessage(msg.chat.id, message, {parseMode:'markdown'})
     });
 
     bot.on(/(^\/chart$)/, function(msg){
