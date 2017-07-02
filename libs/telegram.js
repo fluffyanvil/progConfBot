@@ -25,6 +25,7 @@ var telegram = function(){
     });
 
     bot.on('newChatMembers', function(msg){
+        console.log(msg);
         var message = "```язык программирования, зп, ориентация? *кидает полотенце под ноги*```";
         msg.reply.text(message)
     });
