@@ -24,6 +24,11 @@ var telegram = function(){
         });
     });
 
+    bot.on('newChatMembers', function(msg){
+        var message = "```язык программирования, зп, ориентация? *кидает полотенце под ноги*```";
+        msg.reply.text(message)
+    });
+
     bot.on(/(^\/chart$)/, function(msg){
         msg.reply.text(`${config.herokuUrl}${config.apiStat}${msg.chat.id}`)
     });
