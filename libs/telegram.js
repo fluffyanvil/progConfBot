@@ -30,8 +30,8 @@ var telegram = function(){
         console.log(msg);
         var user = msg.new_chat_member;
         var message = `Слышь, [${ user.first_name } ${ user.last_name }](mention:${user.id}), язык программирования, зп, ориентация?`;
-        return bot.sendPhoto(msg.chat.id, "https://i.ytimg.com/vi/nCpjBDCauhA/hqdefault.jpg", {caption:'привет'});
-        // return bot.sendMessage(msg.chat.id, message, {parseMode:'markdown'})
+        // return bot.sendPhoto(msg.chat.id, "https://i.ytimg.com/vi/nCpjBDCauhA/hqdefault.jpg", {caption:'привет'});
+        return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown', replyToMessage:msg.message_id});
     });
 
     bot.on(/(^\/chart$)/, function(msg){
