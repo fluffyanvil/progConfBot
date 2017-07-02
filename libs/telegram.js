@@ -3,7 +3,9 @@
  */
 var config = require('../config');
 const TeleBot = require('telebot');
-const bot = new TeleBot(process.env.TELEGRAM);
+const bot = new TeleBot({
+    token: process.env.TELEGRAM
+});
 var mongo = require('./mongo');
 var moment = require('moment');
 
@@ -25,9 +27,13 @@ var telegram = function(){
     });
 
     bot.on('newChatMembers', function(msg){
-        console.log(msg);
-        var message = "```язык программирования, зп, ориентация? *кидает полотенце под ноги*```";
-        msg.reply.text(message)
+        var user = msg.new_chat_member;
+        let id = msg.from.id;
+        let replyToMessage = msg.message_id;
+        let parseMode = 'html';
+        return bot.sendMessage(
+            id, `Эй, <b>${ user.first_name }</b> Язык программирования, зп, ориентация?`, {replyToMessage, parseMode}
+        );
     });
 
     bot.on(/(^\/chart$)/, function(msg){
