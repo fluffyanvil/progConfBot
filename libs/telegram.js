@@ -29,7 +29,10 @@ var telegram = function(){
     bot.on('newChatMembers', function(msg){
         console.log(msg);
         var user = msg.new_chat_member;
-        var message = `*У нас новый участник!*\n*Ассалам алейкум, ${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }!*\n*Каковы твои возраст, язык программирования, зп,* _ориентация_*?*`;
+        var message = '*У нас новый участник!*\n';
+        message = message.concat(`*Ассалам алейкум, ${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }!*\n`);
+        message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*');
+        message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown', replyToMessage:msg.message_id});
     });
 
