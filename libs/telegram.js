@@ -15,8 +15,9 @@ var telegram = function(){
     });
 
     bot.on('sticker', function(msg){
+        var date = moment.unix(msg.date);
         mongo.Sticker.create({
-            received: moment.utc(),
+            received: date,
             chatId: msg.chat.id,
             userId: msg.from.id,
             username: msg.from.username
