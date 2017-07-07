@@ -31,13 +31,13 @@ var telegram = function(){
         var user = msg.new_chat_member;
         var message = '*У нас новый участник!*\n';
         message = message.concat(`*Ассалам алейкум, ${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }!*\n`);
-        message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*');
+        message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown', replyToMessage:msg.message_id});
     });
 
     bot.on(/(^\/chart$)/, function(msg){
-        msg.reply.text(`${config.herokuUrl}${config.apiStat}${msg.chat.id}`)
+        msg.reply.text(`http://progconfbotvue.herokuapp.com/chats/${msg.chat.id}`)
     });
 
     function totalWords(item){
