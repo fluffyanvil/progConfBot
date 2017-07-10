@@ -37,7 +37,7 @@ var telegram = function(){
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown', replyToMessage:msg.message_id});
     });
 
-    bot.on(/(^\/chart$)/, function(msg){
+    bot.on(/(^\/chart)/, function(msg){
         msg.reply.text(`http://progconfbotvue.herokuapp.com/chats/${msg.chat.id}`)
     });
 
