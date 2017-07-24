@@ -173,9 +173,9 @@ module.exports = function(app){
         });
     });
 
-    app.get(`${config.apiRoot}${config.apiTodayUsersJoined}:chatId`, function (req, res) {
+    app.get(`${config.apiRoot}${config.apiLastUsersJoined}:chatId`, function (req, res) {
         req.params.chatId = parseInt(req.params.chatId);
-        mongo.JoinedToday(req.params.chatId, function(result, error){
+        mongo.LastJoinedUsers(req.params.chatId, function(result, error){
             if (error){
                 res.status(500).send({ error: 'Something failed!' })
             }

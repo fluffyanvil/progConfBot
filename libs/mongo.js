@@ -456,13 +456,13 @@ module.exports = {
             chatId: msg.chat.id
         });
     },
-    JoinedToday: function(chatId, callback){
-        var date = moment.utc().startOf('day');
+    LastJoinedUsers: function(chatId, callback){
         JoinedUser
             .find({
-                joinDate: {$gt : date},
                 chatId: chatId
             })
+            .sort({joinDate: -1})
+            .limit(5)
             .exec(function(error, users){
                 if (error) {
                     callback(null, err)
