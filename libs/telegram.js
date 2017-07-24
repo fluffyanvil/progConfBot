@@ -33,6 +33,7 @@ var telegram = function(){
         message = message.concat(`*Ассалам алейкум, ${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }!*\n`);
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*');
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
+        mongo.OnUserJoined(msg);
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown', replyToMessage:msg.message_id});
     });
 

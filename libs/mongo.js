@@ -42,19 +42,29 @@ var userSchema = mongoose.Schema({
     username: String,
     firstName: String,
     lastName: String
+});
+
+var joinedUserSchema = mongoose.Schema({
+    id: Number,
+    username: String,
+    firstName: String,
+    lastName: String,
+    joinDate: Date,
+    chatId: Number
 })
 
 var Message = mongoose.model('Message', messageSchema);
 var Sticker = mongoose.model('Sticker', stickerSchema);
 var User = mongoose.model('User', userSchema);
 var Chat = mongoose.model('Chat', chatSchema);
-
+var JoinedUser = mongoose.model('JoinedUser', joinedUserSchema);
 
 module.exports = {
     Message: Message,
     User: User,
     Sticker: Sticker,
     Chat: Chat,
+    JoinedUser: JoinedUser,
     StatByChatName: function (chat, callback){
         Message.aggregate([
             { $match : { chat : chat } },
@@ -259,7 +269,6 @@ module.exports = {
             }
         });
     },
-
     TopStickersByChatId: function (chatId, callback) {
         Sticker.aggregate([
             {
@@ -317,7 +326,6 @@ module.exports = {
             }
         });
     },
-
     TotalByChatId: function (chatId, callback){
         Message.count({chatId : chatId}).exec(function(err, messagesCount){
             if (err){
@@ -338,7 +346,6 @@ module.exports = {
             }
         });
     },
-
     TotalTodayByChatId: function (chatId, callback){
         var date = moment.utc().startOf('day');
         var yesterday = moment.utc().add(-1, 'days').startOf('day');
@@ -436,6 +443,33 @@ module.exports = {
         }, function (err, item){
             if (err) console.log(err);
         });
+    },
+    OnUserJoined: function(msg){
+        var joinedUser = msg.new_chat_member;
+        JoinedUser.create({
+            id: joinedUser.id,
+            username: joinedUser.username,
+            firstName: joinedUser.first_name,
+            lastName: joinedUser.last_name,
+            joinDate: moment.unix(msg.date),
+            chatId: msg.chat.id
+        });
+    },
+    JoinedToday: function(chatId, callback){
+        var date = moment.utc().startOf('day');
+        JoinedUser
+            .find({
+            chatId: chatId
+            })
+            .where('received').gt(date)
+            .exec(function(error, users){
+                if (error) {
+                    callback(null, err)
+                }
+                else {
+                    callback(users, null);
+                }
+            });
     }
 };
 

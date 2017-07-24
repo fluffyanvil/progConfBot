@@ -18,6 +18,7 @@ config.apiMessagesByUserStat = "/top/m/";
 config.apiStickersByUserStat = "/top/s/";
 config.apiTotalActivity = "/total/";
 config.apiTodayActivity = "/today/";
+config.apiTodayUsersJoined = "/users/today/";
 
 
 module.exports = config;

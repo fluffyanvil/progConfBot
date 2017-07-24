@@ -22,21 +22,6 @@ module.exports = function(app){
         });
     });
 
-    app.get('/api/messages/today/:chat', function(req,res){
-        var date = moment.utc().startOf('day');
-        mongo.Message
-            .find({})
-            .where('received').gt(date)
-            .where('chat').equals(req.params.chat)
-            .exec(function (err, doc){
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                res.json(doc);
-            });
-    });
-
     app.get('/api/users/name/:username', function(req,res){
         mongo.User.findOne({username: req.params.username}, function (err, doc){
             if (err) {
@@ -179,6 +164,18 @@ module.exports = function(app){
     app.get(`${config.apiRoot}${config.apiStickersByUserStat}:chatId`, function (req, res) {
         req.params.chatId = parseInt(req.params.chatId);
         mongo.TopStickersByChatId(req.params.chatId, function(result, error){
+            if (error){
+                res.status(500).send({ error: 'Something failed!' })
+            }
+            else{
+                res.json(result);
+            }
+        });
+    });
+
+    app.get(`${config.apiRoot}${config.apiTodayUsersJoined}:chatId`, function (req, res) {
+        req.params.chatId = parseInt(req.params.chatId);
+        mongo.JoinedToday(req.params.chatId, function(result, error){
             if (error){
                 res.status(500).send({ error: 'Something failed!' })
             }
