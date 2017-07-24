@@ -447,14 +447,21 @@ module.exports = {
     },
     OnUserJoined: function(msg){
         var joinedUser = msg.new_chat_member;
-        JoinedUser.create({
-            id: joinedUser.id,
-            username: joinedUser.username,
-            firstName: joinedUser.first_name,
-            lastName: joinedUser.last_name,
-            joinDate: moment.unix(msg.date),
-            chatId: msg.chat.id
-        });
+        JoinedUser
+            .findOneAndUpdate({
+                id: joinedUser.id
+            }, {
+                id: joinedUser.id,
+                username: joinedUser.username,
+                firstName: joinedUser.first_name,
+                lastName: joinedUser.last_name,
+                joinDate: moment.unix(msg.date),
+                chatId: msg.chat.id
+            }, {
+                upsert:true
+            }, function (err, item){
+                if (err) console.log(err);
+            });
     },
     LastJoinedUsers: function(chatId, callback){
         JoinedUser
