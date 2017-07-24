@@ -407,8 +407,9 @@ module.exports = {
             });
     },
     OnNewMessage: function (msg){
+        var date = moment.unix(msg.date);
         Message.create({
-                received: moment.utc(),
+                received: date,
                 chatId: msg.chat.id,
                 userId: msg.from.id,
                 username: msg.from.username,
