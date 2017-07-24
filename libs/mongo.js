@@ -459,9 +459,9 @@ module.exports = {
         var date = moment.utc().startOf('day');
         JoinedUser
             .find({
-            chatId: chatId
+                joinDate: {$gt : date},
+                chatId: chatId
             })
-            .where('received').gt(date)
             .exec(function(error, users){
                 if (error) {
                     callback(null, err)
