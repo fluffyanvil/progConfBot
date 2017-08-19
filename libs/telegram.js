@@ -30,6 +30,8 @@ var telegram = function(){
     bot.on('newChatMembers', function(msg){
         console.log(msg);
         var user = msg.new_chat_member;
+        if (user.id == config.bot_id)
+            return;
         var message = '*У нас новый участник!*\n';
         message = message.concat(`*Ассалам алейкум, ${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }!*\n`);
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
