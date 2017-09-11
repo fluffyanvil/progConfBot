@@ -4,13 +4,6 @@
 config = {};
 config.progConfChatId = -1001092067303;
 config.port = 3000;
-
-config.plotly = {};
-
-config.bot_id = 383827700;
-
-config.plotly.username = "progconf";
-config.plotly.api_key = "7mjosJUdPMLs8CPguUWf";
 config.herokuUrl = "http://progconfbot.herokuapp.com";
 config.apiStat = "/stat/chat/";
 config.apiRoot = "/api";
