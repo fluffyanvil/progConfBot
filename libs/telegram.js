@@ -3,7 +3,9 @@
  */
 const TeleBot = require('telebot');
 const bot = new TeleBot({
-    token: process.env.TELEGRAM
+    token: process.env.TELEGRAM,
+    usePlugins: ['askUser', 'commandButton'],
+    pluginFolder: '../plugins/',
 });
 
 var telegram = function(){
@@ -13,8 +15,7 @@ var telegram = function(){
     var messageController = require('../controllers/MessageController')();
     var stickerController = require('../controllers/StickerController')();
     var chatController = require('../controllers/ChatController')();
-
-
+    var subscriptionController = require('../controllers/SubscriptionController')();
 
     bot.on('text', function(msg) {
         messageController.OnNewMessage(msg);
@@ -22,9 +23,56 @@ var telegram = function(){
         chatController.OnNewMessage(msg);
     });
 
+    bot.on(/\W*(\/subscribe\b)\W*/, function(msg){
+        addSubscriptions(msg);
+    });
+
+    bot.on(/\W*(\/subscribes\b)\W*/, function(msg){
+        getSubscription(msg);
+    });
+
+    var addSubscriptions = function (msg) {
+        var chatType = msg.chat.type;
+        var tags = msg.text.match(/#(\w*[0-9a-zA-Z]+\w*[0-9a-zA-Z])/g);
+        console.log(tags);
+        if (chatType == 'private')
+        {
+            subscriptionController.Add(msg.from.id, msg.chat.id, tags);
+            if (tags != null)
+                msg.reply.text(`you were subscribed to ${tags.join(", ")}`);
+        }
+        if ((chatType == 'group' || chatType =='supergroup')){
+            msg.reply.text(`you can create subscription in private chat only`);
+        }
+    };
+
+    var getSubscription = function (msg) {
+        var chatType = msg.chat.type;
+        if (chatType == 'private')
+        {
+            let replyMarkup = bot.inlineKeyboard([
+                [
+                    bot.inlineButton('callback', {callback: 'this_is_data'}),
+                    bot.inlineButton('inline', {inline: 'some query'})
+                ], [
+                    bot.inlineButton('url', {url: 'https://telegram.org'})
+                ]
+            ]);
+            subscriptionController.GetUserSubscriptions(msg.from.id, function(result){
+                if (result == undefined)
+                    msg.reply.text(`you have no subscriptions`);
+                else
+                    return bot.sendMessage(msg.from.id, 'Inline keyboard example.', {replyMarkup});
+                    //msg.reply.text(`all your subscribes: ${result.join(", ")}`, {replyMarkup: replyMarkup});
+            });
+        }
+    };
+
     bot.on('sticker', function(msg){
         stickerController.OnNewMessage(msg);
     });
+
+
 
     bot.on('newChatMembers', function(msg){
         var botId = bot.getMe().id;
@@ -43,10 +91,6 @@ var telegram = function(){
     bot.on(/(^\/chart)/, function(msg){
         msg.reply.text(`http://progconfbotvue.herokuapp.com/chats/${msg.chat.id}`)
     });
-
-
-
-
 };
 
 module.exports.Telegram = telegram;

@@ -14,7 +14,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-mongoose.connect(process.env.MONGO);
+mongoose.connect(process.env.MONGO, {useMongoClient: true});
 var db = mongoose.connection;
 
 db.on('error', function (err) {
@@ -30,5 +30,4 @@ var server = app.listen(process.env.PORT, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Web server started at http://%s:%s', host, port);
-
 });
