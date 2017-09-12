@@ -2,7 +2,7 @@
  * Created by admin on 9/11/2017.
  */
 var StickerModel = require('../models/StickerModel').StickerModel;
-
+var moment = require('moment');
 module.exports = function () {
     module = {};
     var chatController = require('./ChatController')();

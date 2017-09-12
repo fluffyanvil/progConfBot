@@ -2,7 +2,7 @@
  * Created by admin on 9/11/2017.
  */
 var JoinedUserModel = require('../models/JoinedUserModel').JoinedUserModel;
-
+var moment = require('moment');
 module.exports = function () {
     module = {};
     module.OnUserJoined = function(msg){
