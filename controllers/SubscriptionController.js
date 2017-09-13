@@ -2,22 +2,26 @@ var SubscriptionModel = require('../models/SubscriptionModel').SubscriptionModel
 
 module.exports = function () {
     module = {};
-    module.Add = function (userId, chatId, tags) {
-        if (tags == null) return;
-        tags.forEach(function callback(tag, index, array) {
-            SubscriptionModel.findOneAndUpdate({
-                tag : tag
-            }, {
-                userId: userId,
-                chatId: chatId,
-                tag: tag
-            }, {
-                upsert:true
-            }, function (err, item){
-                if (err) console.log(err);
+    module.AddSubscriptions = function (userId, chatId, tags) {
+        return new Promise((resolve, reject) => {
+            if (tags == null) resolve();
+            tags.forEach(function callback(tag, index, array) {
+                SubscriptionModel.findOneAndUpdate({
+                    userId: userId,
+                    chatId: chatId,
+                    tag: tag
+                }, {
+                    userId: userId,
+                    chatId: chatId,
+                    tag: tag
+                }, {
+                    upsert:true
+                }, function (err, item){
+                    if (err) reject(Error(err));
+                });
             });
-        });
-
+            resolve();
+        })
     };
     module.GetTagsSubscriptions = function (tags) {
         SubscriptionModel.find({
@@ -26,22 +30,42 @@ module.exports = function () {
             return docs;
         });
     };
-    module.GetUserSubscriptions = function (userId, callback) {
-        SubscriptionModel.find({userId:userId}, function(error, result){
-            if (error) console.log(error);
-            else{
-                callback(result);
-            }
-        })
+    module.GetUserSubscriptions = function (userId) {
+        return new Promise(function(resolve, reject) {
+            SubscriptionModel
+                .find({userId:userId}, function (error, result) {
+                    if (error){
+                        console.log(error);
+                        reject(Error("It broke"));
+                    }
+                    else {
+                        resolve(result);
+                    }
+                });
+        });
+
     };
     module.GetChatSubscriptions = function (userId, chatId) {
-        SubscriptionModel
-            .find({})
-            .where('userId').eq(userId)
-            .where('chatId').eq(chatId)
-            .exec(function(error, result){
-                return result;
-            })
-    }
+        return new Promise((resolve, reject) => {
+            SubscriptionModel
+                .find({ })
+                .where('userId').eq(userId)
+                .where('chatId').eq(chatId)
+                .exec(function(error, result) {
+                    if (error) reject(Error("It broke"));
+                    resolve(result);
+                });
+        })
+
+    };
+
+    module.RemoveSubscription = function(id){
+        return new Promise((resolve, reject) => {
+            SubscriptionModel.remove({ _id : id }, function (error) {
+                if (error) reject(error);
+                else resolve();
+            });
+        });
+    };
     return module;
 }

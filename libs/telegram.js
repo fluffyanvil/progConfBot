@@ -9,6 +9,7 @@ const bot = new TeleBot({
 });
 
 var telegram = function(){
+    var lastMessage;
     bot.start();
     var joinedUserController = require('../controllers/JoinedUserController')();
     var userController = require('../controllers/UserController')();
@@ -27,51 +28,91 @@ var telegram = function(){
         addSubscriptions(msg);
     });
 
-    bot.on(/\W*(\/subscribes\b)\W*/, function(msg){
-        getSubscription(msg);
+    bot.on(/\W*(\/subscribes\b)\W*/, function (msg) {
+        var chatType = msg.chat.type;
+        if (chatType === 'private')
+        {
+            getSubscriptions(msg);
+        }
     });
 
+    // Inline button callback
+    bot.on('callbackQuery', msg => {
+        // User message alert
+        console.info(msg);
+        deleteSubscription(msg, msg.data);
+    });
+
+    var getSubscriptions = function(msg){
+        subscriptionController.GetUserSubscriptions(msg.from.id)
+            .then(subs => {
+                if (subs === undefined || subs.length === 0)
+                    msg.reply.text(`you have no subscriptions`);
+                else {
+                    var buttons = [];
+                    subs.forEach(subscription => {
+                        buttons.push([bot.inlineButton(`${subscription.tag} 🗑`, {callback: subscription._id})]);
+                    });
+                    let replyMarkup = bot.inlineKeyboard(buttons);
+                    return bot.sendMessage(msg.from.id, 'Your subs', {replyMarkup}).then(re => {
+                        // Start updating message
+                        lastMessage = [msg.from.id, re.result.message_id];
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                return bot.sendMessage(msg.from.id, 'error')
+            });
+    }
+
     var addSubscriptions = function (msg) {
-        var chatType = msg.chat.type;
-        var tags = msg.text.match(/#(\w*[0-9a-zA-Z]+\w*[0-9a-zA-Z])/g);
+        let chatType = msg.chat.type;
+        let tags = msg.text.match(/#(\w*[0-9a-zA-Z]+\w*[0-9a-zA-Z])/g);
         console.log(tags);
-        if (chatType == 'private')
+        if (chatType === 'private')
         {
-            subscriptionController.Add(msg.from.id, msg.chat.id, tags);
-            if (tags != null)
-                msg.reply.text(`you were subscribed to ${tags.join(", ")}`);
+            subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, tags)
+                .then(() => getSubscriptions(msg))
+                .catch(error => {
+                    console.error(error);
+                    return bot.sendMessage(msg.from.id, 'error add')
+                });
         }
-        if ((chatType == 'group' || chatType =='supergroup')){
-            msg.reply.text(`you can create subscription in private chat only`);
+        if ((chatType === 'group' || chatType ==='supergroup')){
+            return bot.sendMessage(msg.from.id, `you can create subscription in private chat only`);
         }
     };
 
-    var getSubscription = function (msg) {
-        var chatType = msg.chat.type;
-        if (chatType == 'private')
-        {
-            let replyMarkup = bot.inlineKeyboard([
-                [
-                    bot.inlineButton('callback', {callback: 'this_is_data'}),
-                    bot.inlineButton('inline', {inline: 'some query'})
-                ], [
-                    bot.inlineButton('url', {url: 'https://telegram.org'})
-                ]
-            ]);
-            subscriptionController.GetUserSubscriptions(msg.from.id, function(result){
-                if (result == undefined)
-                    msg.reply.text(`you have no subscriptions`);
-                else
-                    return bot.sendMessage(msg.from.id, 'Inline keyboard example.', {replyMarkup});
-                    //msg.reply.text(`all your subscribes: ${result.join(", ")}`, {replyMarkup: replyMarkup});
+    var deleteSubscription = function(msg, id){
+        var userId = msg.from.id;
+        subscriptionController.RemoveSubscription(id)
+            .then(() => subscriptionController.GetUserSubscriptions(userId))
+            .then(subs => {
+                if (subs === undefined || subs.length === 0)
+                    return bot.sendMessage(`you have no subscriptions`);
+                else {
+                    var buttons = [];
+                    subs.forEach(subscription => {
+                        buttons.push([bot.inlineButton(`${subscription.tag} 🗑`, {callback: subscription._id})]);
+                    });
+                    let replyMarkup = bot.inlineKeyboard(buttons);
+                    const [chatId, messageId] = lastMessage;
+                    return bot.editMessageReplyMarkup({chatId, messageId}, {replyMarkup}).then(re => {
+                        // Start updating message
+                        lastMessage = [msg.from.id, re.result.message_id];
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                return bot.sendMessage(msg.from.id, 'error delete')
             });
-        }
-    };
+    }
 
     bot.on('sticker', function(msg){
         stickerController.OnNewMessage(msg);
     });
-
 
 
     bot.on('newChatMembers', function(msg){
