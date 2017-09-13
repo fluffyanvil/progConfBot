@@ -4,8 +4,8 @@ module.exports = function () {
     module = {};
     module.AddSubscriptions = function (userId, chatId, tags) {
         return new Promise((resolve, reject) => {
-            if (tags == null) resolve();
-            tags.forEach(function callback(tag, index, array) {
+            if (tags == null) reject();
+            tags.forEach(function(tag, index, array) {
                 SubscriptionModel.findOneAndUpdate({
                     userId: userId,
                     chatId: chatId,
@@ -17,7 +17,10 @@ module.exports = function () {
                 }, {
                     upsert:true
                 }, function (err, item){
-                    if (err) reject(Error(err));
+                    if (err) reject(err);
+                    else {
+
+                    }
                 });
             });
             resolve();
