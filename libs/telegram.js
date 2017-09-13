@@ -69,7 +69,7 @@ var telegram = function(){
         console.log(tags);
         if (chatType === 'private')
         {
-            subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, tags)
+            subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
                 .then(() => {
                     setTimeout(function () {
                         getSubscriptions(msg);

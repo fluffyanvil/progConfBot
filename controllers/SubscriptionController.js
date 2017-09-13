@@ -2,7 +2,7 @@ var SubscriptionModel = require('../models/SubscriptionModel').SubscriptionModel
 
 module.exports = function () {
     module = {};
-    module.AddSubscriptions = function (userId, chatId, tags) {
+    module.AddSubscriptions = function (userId, chatId, firstName, chatTitle, tags) {
         return new Promise((resolve, reject) => {
             if (tags == null) reject();
             tags.forEach(function(tag, index, array) {
@@ -13,6 +13,8 @@ module.exports = function () {
                 }, {
                     userId: userId,
                     chatId: chatId,
+                    userFirstName: firstName,
+                    chatTitle: chatTitle,
                     tag: tag
                 }, {
                     upsert:true
