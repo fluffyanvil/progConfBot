@@ -80,7 +80,7 @@ var telegram = function(){
                 });
         }
         if ((chatType === 'group' || chatType ==='supergroup')){
-            return bot.sendMessage(msg.from.id, `you can create subscription in private chat only`);
+            return bot.sendMessage(msg.chat.id, `you can create subscription in private chat only`, {parseMode:'Markdown', replyToMessage:msg.message_id});
         }
     };
 
