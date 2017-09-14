@@ -30,12 +30,21 @@ module.exports = function () {
     };
     module.GetTagsSubscriptions = function (tags) {
         return new Promise((resolve, reject) => {
-            SubscriptionModel.find({
-                'tag': { $in: tags}
-            }, function(err, docs){
-                if (err) reject(Error(err));
-                resolve(docs);
-            });
+            SubscriptionModel.aggregate(
+                [
+                    { $match : { tag : {$in : ['#swift', '#навальный', '#котики']} } },
+                    {
+                        $group: {
+                            _id: '$userId',
+                            userId : { $first: '$userId' }
+                        }
+                    }
+                ],
+                function(err, docs){
+                    if (err) reject(Error(err));
+                    resolve(docs);
+                }
+            );
         });
     };
     module.GetUserSubscriptions = function (userId) {
