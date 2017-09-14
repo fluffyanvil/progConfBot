@@ -32,7 +32,7 @@ module.exports = function () {
         return new Promise((resolve, reject) => {
             SubscriptionModel.aggregate(
                 [
-                    { $match : { tag : {$in : ['#swift', '#навальный', '#котики']} } },
+                    { $match : { tag : {$in : tags} } },
                     {
                         $group: {
                             _id: '$userId',
