@@ -52,6 +52,7 @@ var telegram = function(){
                         buttons.push([bot.inlineButton(`${subscription.tag} 🗑`, {callback: subscription._id})]);
                     });
                     let replyMarkup = bot.inlineKeyboard(buttons);
+                    console.log(replyMarkup);
                     return bot.sendMessage(msg.from.id, 'Your subs', {replyMarkup});
                 }
             })
@@ -65,12 +66,12 @@ var telegram = function(){
 
     var addSubscriptions = function (msg) {
         let chatType = msg.chat.type;
-        let tags = msg.text.match(/#(\w*[0-9a-zA-Zа-яА-Я]+\w*[0-9a-zA-Zа-яА-Я])/g);
-        if (tags === undefined || tags === null || tags.length === 0)
-            return bot.sendMessage(msg.from.id, 'use #hashtags');
+        let tags = msg.text.match(/#(\w*[0-9a-zA-Zа-яА-Я]+\w*[a-zA-Zа-яА-Я])/g);
+
         if (chatType === 'private')
         {
-
+            if (tags === undefined || tags === null || tags.length === 0)
+                return bot.sendMessage(msg.from.id, 'use #hashtags');
             subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
                 .then(() => {
                     setTimeout(function () {
@@ -78,7 +79,7 @@ var telegram = function(){
                     }, 1000);
                 })
                 .catch(error => {
-                    return bot.sendMessage(msg.from.id, 'error add')
+                    return bot.sendMessage(msg.from.id, 'error in add')
                 });
         }
         if ((chatType === 'group' || chatType ==='supergroup')){
