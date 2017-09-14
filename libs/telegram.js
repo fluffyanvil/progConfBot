@@ -45,7 +45,7 @@ var telegram = function(){
         subscriptionController.GetUserSubscriptions(msg.from.id)
             .then(subs => {
                 if (subs === undefined || subs === null || subs.length === 0)
-                    msg.reply.text(`you have no subscriptions`);
+                    return bot.sendMessage(msg.from.id, `you have no subscriptions`);
                 else {
                     var buttons = [];
                     subs.forEach(subscription => {
