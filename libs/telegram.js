@@ -23,9 +23,8 @@ var telegram = function(){
         userController.OnNewMessage(msg);
         chatController.OnNewMessage(msg);
         let chatType = msg.chat.type;
+        let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-Zа-яА-Я])/g);
         if ((chatType === 'group' || chatType ==='supergroup')){
-            let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-Zа-яА-Я])/g);
-
             if (tags !== null)
                 subscriptionController
                     .GetTagsSubscriptions(tags)
@@ -33,6 +32,20 @@ var telegram = function(){
                         notifyUser(msg, subs);
                     })
                     .catch(error => {});
+        }
+        if (chatType === 'private')
+        {
+            if (tags === undefined || tags === null || tags.length === 0)
+                return bot.sendMessage(msg.from.id, 'use #hashtags');
+            subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
+                .then(() => {
+                    setTimeout(function () {
+                        getSubscriptions(msg);
+                    }, 1000);
+                })
+                .catch(error => {
+                    return bot.sendMessage(msg.from.id, 'error in add')
+                });
         }
 
 
@@ -47,9 +60,6 @@ var telegram = function(){
         });
     }
 
-    bot.on(/\W*(\/subscribe\b)\W*/, function(msg){
-        addSubscriptions(msg);
-    });
 
     bot.on(/\W*(\/subscribes\b)\W*/, function (msg) {
         var chatType = msg.chat.type;
