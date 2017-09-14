@@ -66,7 +66,7 @@ var telegram = function(){
 
     var addSubscriptions = function (msg) {
         let chatType = msg.chat.type;
-        let tags = msg.text.match(/#(\w*[0-9a-zA-Zа-яА-Я]+\w*[a-zA-Zа-яА-Я])/g);
+        let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-ZА-Я])/g);
 
         if (chatType === 'private')
         {
