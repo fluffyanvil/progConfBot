@@ -73,7 +73,7 @@ var telegram = function(){
         userController.OnNewMessage(msg);
         chatController.OnNewMessage(msg);
         let chatType = msg.chat.type;
-        let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-Zа-яА-Я])/g);
+        let tags = msg.text.match(/#([^\s]*)/g);
         if ((chatType === 'group' || chatType ==='supergroup')){
             if (tags !== null)
                 subscriptionController
@@ -97,7 +97,6 @@ var telegram = function(){
                     return bot.sendMessage(msg.from.id, 'error in add')
                 });
         }
-
 
     });
     
