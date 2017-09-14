@@ -22,7 +22,30 @@ var telegram = function(){
         messageController.OnNewMessage(msg);
         userController.OnNewMessage(msg);
         chatController.OnNewMessage(msg);
+        let chatType = msg.chat.type;
+        if ((chatType === 'group' || chatType ==='supergroup')){
+            let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-Zа-яА-Я])/g);
+
+            if (tags !== null)
+                subscriptionController
+                    .GetTagsSubscriptions(tags)
+                    .then(subs => {
+                        notifyUser(msg, subs);
+                    })
+                    .catch(error => {});
+        }
+
+
     });
+    
+    var notifyUser = function (msg, subscriptions) {
+        console.log(msg);
+        return new Promise((resolve, reject) => {
+            subscriptions.forEach((sub, index, array) => {
+                bot.sendMessage(sub.userId, `https://t.me/${msg.chat.username}/${msg.message_id}`);
+            });
+        });
+    }
 
     bot.on(/\W*(\/subscribe\b)\W*/, function(msg){
         addSubscriptions(msg);
@@ -66,7 +89,7 @@ var telegram = function(){
 
     var addSubscriptions = function (msg) {
         let chatType = msg.chat.type;
-        let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-ZА-Я])/g);
+        let tags = msg.text.match(/#(\w*[a-zA-Zа-яА-Я]\w*[_0-9a-zA-Zа-яА-Я])/g);
 
         if (chatType === 'private')
         {

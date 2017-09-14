@@ -29,10 +29,13 @@ module.exports = function () {
         })
     };
     module.GetTagsSubscriptions = function (tags) {
-        SubscriptionModel.find({
-            'tag': { $in: tags}
-        }, function(err, docs){
-            return docs;
+        return new Promise((resolve, reject) => {
+            SubscriptionModel.find({
+                'tag': { $in: tags}
+            }, function(err, docs){
+                if (err) reject(Error(err));
+                resolve(docs);
+            });
         });
     };
     module.GetUserSubscriptions = function (userId) {
