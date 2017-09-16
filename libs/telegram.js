@@ -3,9 +3,7 @@
  */
 const TeleBot = require('telebot');
 const bot = new TeleBot({
-    token: process.env.TELEGRAM,
-    usePlugins: ['askUser', 'commandButton'],
-    pluginFolder: '../plugins/',
+    token: process.env.TELEGRAM
 });
 
 let telegram = function(){
