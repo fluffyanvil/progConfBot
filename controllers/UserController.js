@@ -1,7 +1,7 @@
 /**
  * Created by admin on 9/11/2017.
  */
-var UserModel = require('../models/UserModel').UserModel;
+const UserModel = require('../models/UserModel').UserModel;
 
 module.exports = function () {
     module = {};

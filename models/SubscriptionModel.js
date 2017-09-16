@@ -1,5 +1,5 @@
-var mongoose = require("mongoose");
-var subscriptionSchema = mongoose.Schema({
+const mongoose = require("mongoose");
+const subscriptionSchema = mongoose.Schema({
     userId: Number,
     userFirstName: String,
     chatId: Number,
@@ -7,7 +7,7 @@ var subscriptionSchema = mongoose.Schema({
     tag: String
 });
 
-var SubscriptionModel = mongoose.model('Subscription', subscriptionSchema);
+const SubscriptionModel = mongoose.model('Subscription', subscriptionSchema);
 
 module.exports = {
     SubscriptionModel : SubscriptionModel

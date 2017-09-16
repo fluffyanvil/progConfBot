@@ -8,17 +8,17 @@ const bot = new TeleBot({
     pluginFolder: '../plugins/',
 });
 
-var telegram = function(){
-    var lastMessage;
+let telegram = function(){
+    let lastMessage;
     bot.start();
-    var joinedUserController = require('../controllers/JoinedUserController')();
-    var userController = require('../controllers/UserController')();
-    var messageController = require('../controllers/MessageController')();
-    var stickerController = require('../controllers/StickerController')();
-    var chatController = require('../controllers/ChatController')();
-    var subscriptionController = require('../controllers/SubscriptionController')();
+    const joinedUserController = require('../controllers/JoinedUserController')();
+    const userController = require('../controllers/UserController')();
+    const messageController = require('../controllers/MessageController')();
+    const stickerController = require('../controllers/StickerController')();
+    const chatController = require('../controllers/ChatController')();
+    const subscriptionController = require('../controllers/SubscriptionController')();
 
-    var getSubscriptions = function(msg){
+    let getSubscriptions = function(msg){
         subscriptionController.GetUserSubscriptions(msg.from.id)
             .then(subs => {
                 if (subs === undefined || subs === null || subs.length === 0)
@@ -41,8 +41,8 @@ var telegram = function(){
             });
     };
 
-    var deleteSubscription = function(msg, id){
-        var userId = msg.from.id;
+    let deleteSubscription = function(msg, id){
+        const userId = msg.from.id;
         subscriptionController.RemoveSubscription(id)
             .then(() => subscriptionController.GetUserSubscriptions(userId))
             .then(subs => {
@@ -51,7 +51,7 @@ var telegram = function(){
                     return bot.editMessageText({chatId, messageId}, `you have no subscriptions`);
                 }
                 else {
-                    var buttons = [];
+                    const buttons = [];
                     subs.forEach(subscription => {
                         buttons.push([bot.inlineButton(`${subscription.tag} 🗑`, {callback: subscription._id})]);
                     });
@@ -66,7 +66,7 @@ var telegram = function(){
             .catch(error => {
                 return bot.sendMessage(msg.from.id, 'error delete')
             });
-    }
+    };
 
     bot.on('text', function(msg) {
         messageController.OnNewMessage(msg);
@@ -100,7 +100,7 @@ var telegram = function(){
 
     });
     
-    var notifyUser = function (msg, subscriptions) {
+    let notifyUser = function (msg, subscriptions) {
         return new Promise((resolve, reject) => {
             subscriptions.forEach((sub, index, array) => {
                 bot.sendMessage(sub.userId, `https://t.me/${msg.chat.username}/${msg.message_id}`);
@@ -109,7 +109,7 @@ var telegram = function(){
     };
 
     bot.on(/\W*(\/subscribes\b)\W*/, function (msg) {
-        var chatType = msg.chat.type;
+        const chatType = msg.chat.type;
         if (chatType === 'private')
         {
             getSubscriptions(msg);
@@ -125,11 +125,11 @@ var telegram = function(){
     });
 
     bot.on('newChatMembers', function(msg){
-        var botId = bot.getMe().id;
-        var user = msg.new_chat_member;
-        if (user.id == botId)
+        const botId = bot.getMe().id;
+        const user = msg.new_chat_member;
+        if (user.id === botId)
             return;
-        var message = '*У нас новый участник!*\n';
+        let message = '*У нас новый участник!*\n';
         message = message.concat(`*Ohayō gozaimasu,* [${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');

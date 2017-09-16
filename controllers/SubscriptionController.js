@@ -26,7 +26,7 @@ module.exports = function () {
                 });
             });
             resolve();
-        })
+        });
     };
     module.GetTagsSubscriptions = function (tags) {
         return new Promise((resolve, reject) => {
@@ -60,7 +60,6 @@ module.exports = function () {
                     }
                 });
         });
-
     };
     module.GetChatSubscriptions = function (userId, chatId) {
         return new Promise((resolve, reject) => {
@@ -72,8 +71,7 @@ module.exports = function () {
                     if (error) reject(Error("It broke"));
                     resolve(result);
                 });
-        })
-
+        });
     };
 
     module.RemoveSubscription = function(id){
