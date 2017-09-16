@@ -1,13 +1,13 @@
 /**
  * Created by admin on 9/11/2017.
  */
-var MessageModel = require('../models/MessageModel').MessageModel;
-var moment = require('moment');
+const MessageModel = require('../models/MessageModel').MessageModel;
+const moment = require('moment');
 
 
 module.exports = function () {
     module = {};
-    var ChatController = require('./ChatController')();
+    const ChatController = require('./ChatController')();
     module.StatByChatName = function (chat, callback){
         MessageModel.aggregate([
             { $match : { chat : chat } },
@@ -152,7 +152,7 @@ module.exports = function () {
         });
     };
     module.OnNewMessage = function(msg){
-        var date = moment.unix(msg.date);
+        const date = moment.unix(msg.date);
         MessageModel.create({
                 received: date,
                 chatId: msg.chat.id,
@@ -178,8 +178,8 @@ module.exports = function () {
         });
     };
     module.TotalTodayByChatId = function(chatId){
-        var date = moment.utc().startOf('day');
-        var yesterday = moment.utc().add(-1, 'days').startOf('day');
+        const date = moment.utc().startOf('day');
+        const yesterday = moment.utc().add(-1, 'days').startOf('day');
         MessageModel
             .count({})
             .where('received').gt(date)
@@ -209,6 +209,6 @@ module.exports = function () {
                         });
                 }
             });
-    }
+    };
     return module;
-}
+};

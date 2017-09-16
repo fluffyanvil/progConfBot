@@ -1,7 +1,7 @@
 /**
  * Created by admin on 9/11/2017.
  */
-var ChatModel = require('../models/ChatModel').ChatModel;
+const ChatModel = require('../models/ChatModel').ChatModel;
 
 module.exports = function(){
     module = {};
@@ -41,6 +41,6 @@ module.exports = function(){
         }, function (err, item){
             if (err) console.log(err);
         });
-    }
+    };
     return module;
 };

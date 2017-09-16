@@ -4,7 +4,7 @@ module.exports = function () {
     module = {};
     module.AddSubscriptions = function (userId, chatId, firstName, chatTitle, tags) {
         return new Promise((resolve, reject) => {
-            if (tags == null) reject();
+            if (tags === null) reject();
             tags.forEach(function(tag, index, array) {
                 SubscriptionModel.findOneAndUpdate({
                     userId: userId,
@@ -32,7 +32,13 @@ module.exports = function () {
         return new Promise((resolve, reject) => {
             SubscriptionModel.aggregate(
                 [
-                    { $match : { tag : {$in : tags} } },
+                    {
+                        $match : {
+                            tag : {
+                                $in : tags
+                            }
+                        }
+                    },
                     {
                         $group: {
                             _id: '$userId',
@@ -83,4 +89,4 @@ module.exports = function () {
         });
     };
     return module;
-}
+};

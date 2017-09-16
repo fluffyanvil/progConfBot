@@ -1,11 +1,11 @@
 /**
  * Created by admin on 9/11/2017.
  */
-var StickerModel = require('../models/StickerModel').StickerModel;
-var moment = require('moment');
+const StickerModel = require('../models/StickerModel').StickerModel;
+const moment = require('moment');
 module.exports = function () {
     module = {};
-    var chatController = require('./ChatController')();
+    const chatController = require('./ChatController')();
     module.TopStickersByChatId = function (chatId, callback) {
         StickerModel.aggregate([
             {
@@ -67,8 +67,8 @@ module.exports = function () {
         });
     };
     module.TotalTodayByChatId = function(chatId){
-        var date = moment.utc().startOf('day');
-        var yesterday = moment.utc().add(-1, 'days').startOf('day');
+        const date = moment.utc().startOf('day');
+        const yesterday = moment.utc().add(-1, 'days').startOf('day');
         StickerModel
             .count({})
             .where('received').gt(date)
@@ -100,7 +100,7 @@ module.exports = function () {
             });
     };
     module.OnNewMessage = function (msg) {
-        var date = moment.unix(msg.date);
+        const date = moment.unix(msg.date);
         StickerModel.create({
                 received: date,
                 chatId: msg.chat.id,
@@ -110,6 +110,6 @@ module.exports = function () {
             function (err, item){
                 if (err) console.log(err);
             });
-    }
+    };
     return module;
-}
+};
