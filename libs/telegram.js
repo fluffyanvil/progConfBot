@@ -67,35 +67,44 @@ let telegram = function(){
     };
 
     bot.on('text', function(msg) {
-        messageController.OnNewMessage(msg);
-        userController.OnNewMessage(msg);
-        chatController.OnNewMessage(msg);
-        let chatType = msg.chat.type;
-        let tags = msg.text.match(/#([^\s]*)/g);
-        if ((chatType === 'group' || chatType ==='supergroup')){
-            if (tags !== null)
-                subscriptionController
-                    .GetTagsSubscriptions(tags)
-                    .then(subs => {
-                        notifyUser(msg, subs);
-                    })
-                    .catch(error => {});
-        }
-        if (chatType === 'private')
-        {
-            if (tags === undefined || tags === null || tags.length === 0)
-                return bot.sendMessage(msg.from.id, 'use #hashtags');
-            subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
-                .then(() => {
-                    setTimeout(function () {
-                        getSubscriptions(msg);
-                    }, 1000);
-                })
-                .catch(error => {
-                    return bot.sendMessage(msg.from.id, 'error in add')
-                });
-        }
+        onText(msg);
+    });
 
+    const onText = (msg) => {
+        if (msg.text != null){
+            messageController.OnNewMessage(msg);
+            userController.OnNewMessage(msg);
+            chatController.OnNewMessage(msg);
+            let chatType = msg.chat.type;
+            let tags = msg.text.match(/#([^\s]*)/g);
+            if ((chatType === 'group' || chatType ==='supergroup')){
+                if (tags !== null)
+                    subscriptionController
+                        .GetTagsSubscriptions(tags)
+                        .then(subs => {
+                            notifyUser(msg, subs);
+                        })
+                        .catch(error => {});
+            }
+            if (chatType === 'private')
+            {
+                if (tags === undefined || tags === null || tags.length === 0)
+                    return bot.sendMessage(msg.from.id, 'use #hashtags');
+                subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
+                    .then(() => {
+                        setTimeout(function () {
+                            getSubscriptions(msg);
+                        }, 1000);
+                    })
+                    .catch(error => {
+                        return bot.sendMessage(msg.from.id, 'error in add')
+                    });
+            }
+        }
+    }
+
+    bot.on('edit', (msg) => {
+        onText(msg);
     });
     
     let notifyUser = function (msg, subscriptions) {
@@ -132,6 +141,7 @@ let telegram = function(){
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
         joinedUserController.OnUserJoined(msg);
+
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
     });
 

@@ -24,6 +24,12 @@ module.exports = function () {
             });
     };
 
+    module.OnUserMarkAsAlive = function (userId) {
+        return new Promise((resolve, reject) =>{
+
+        });
+    };
+
     module.GetLastJoinedUsers = function(chatId, count, callback){
         JoinedUserModel
             .find({
