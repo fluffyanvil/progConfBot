@@ -67,10 +67,20 @@ let telegram = function(){
     };
 
     bot.on('text', function(msg) {
-        onText(msg);
+        processMessage(msg);
     });
 
-    const onText = (msg) => {
+    bot.on('image', function(msg) {
+        processMessage(msg);
+    });
+    bot.on('video', function(msg) {
+        processMessage(msg);
+    });
+    bot.on('audio', function(msg) {
+        processMessage(msg);
+    });
+
+    const processMessage = (msg) => {
         if (msg.text != null){
             messageController.OnNewMessage(msg);
             userController.OnNewMessage(msg);
@@ -104,7 +114,7 @@ let telegram = function(){
     }
 
     bot.on('edit', (msg) => {
-        onText(msg);
+        processMessage(msg);
     });
     
     let notifyUser = function (msg, subscriptions) {
