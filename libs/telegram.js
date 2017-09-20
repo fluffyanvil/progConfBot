@@ -70,7 +70,7 @@ let telegram = function(){
         processMessage(msg);
     });
 
-    bot.on('image', function(msg) {
+    bot.on('photo', function(msg) {
         processMessage(msg);
     });
     bot.on('video', function(msg) {
