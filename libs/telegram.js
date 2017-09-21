@@ -150,7 +150,8 @@ let telegram = function(){
         let message = '*У нас новый участник!*\n';
         message = message.concat(`*Ohayō gozaimasu,* [${ user.first_name === null ? '' : user.first_name }${ user.last_name === null ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
-        message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
+        message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
+        message = message.concat('#all');
         joinedUserController.OnUserJoined(msg);
 
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
@@ -164,7 +165,7 @@ let telegram = function(){
         let message = '*Нас покинул* ';
         message = message.concat(`[${ user.first_name === null ? '' : user.first_name }${ user.last_name === null ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
         message = message.concat('*Аминь😢*\n');
-        message = message.concat('#left\n');
+        message = message.concat('#all');
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
     });
 
