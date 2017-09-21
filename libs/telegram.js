@@ -80,13 +80,14 @@ let telegram = function(){
         processMessage(msg);
     });
 
-    const processMessage = (msg) => {
-        if (msg.text != null){
+    let processMessage = (msg) => {
+        let text = (msg.caption === null || msg.caption === undefined) ? msg.text : msg.caption;
+        if (text !== null){
             messageController.OnNewMessage(msg);
             userController.OnNewMessage(msg);
             chatController.OnNewMessage(msg);
             let chatType = msg.chat.type;
-            let tags = msg.text.match(/#([^\s]*)/g);
+            let tags = text.match(/#([^\s]*)/g);
             if ((chatType === 'group' || chatType ==='supergroup')){
                 if (tags !== null)
                     subscriptionController
@@ -152,6 +153,17 @@ let telegram = function(){
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*');
         joinedUserController.OnUserJoined(msg);
 
+        return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
+    });
+
+    bot.on('leftChatMember', (msg) => {
+        const botId = bot.getMe().id;
+        const user = msg.left_chat_member;
+        if (user.id === botId)
+            return;
+        let message = '*Нас покинул!* ';
+        message = message.concat(`[${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
+        message = message.concat('*Аминь😢*');
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
     });
 
