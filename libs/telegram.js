@@ -161,7 +161,7 @@ let telegram = function(){
         const user = msg.left_chat_member;
         if (user.id === botId)
             return;
-        let message = '*Нас покинул!* ';
+        let message = '*Нас покинул* ';
         message = message.concat(`[${ user.first_name == null ? '' : user.first_name }${ user.last_name == null ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
         message = message.concat('*Аминь😢*');
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
