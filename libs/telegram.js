@@ -153,7 +153,12 @@ let telegram = function(){
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
         message = message.concat('#all');
         joinedUserController.OnUserJoined(msg);
-
+        subscriptionController
+            .GetTagsSubscriptions(['#all'])
+            .then(subs => {
+                notifyUser(msg, subs);
+            })
+            .catch(error => {});
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
     });
 
@@ -166,6 +171,12 @@ let telegram = function(){
         message = message.concat(`[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
         message = message.concat('*Аминь😢*\n');
         message = message.concat('#all');
+        subscriptionController
+            .GetTagsSubscriptions(['#all'])
+            .then(subs => {
+                notifyUser(msg, subs);
+            })
+            .catch(error => {});
         return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
     });
 
