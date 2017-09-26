@@ -100,7 +100,7 @@ let telegram = function(){
                             });
                             let replyMarkup = bot.inlineKeyboard(buttons);
                             console.log(replyMarkup);
-                            return bot.sendMessage(msg.from.id, 'Your subs', {replyMarkup});
+                            return bot.sendMessage(msg.chat.id, 'Tags', {replyMarkup});
                         })
                         .catch(error => {});
             }
