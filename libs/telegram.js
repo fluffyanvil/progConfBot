@@ -93,14 +93,13 @@ let telegram = function(){
                     subscriptionController
                         .GetTagsSubscriptions(tags)
                         .then(subs => {
-                            notifyUser(msg, subs);
                             var buttons = [];
-                            subs.forEach(subscription => {
-                                buttons.push([bot.inlineButton(`${subscription.tag}`, {callback: subscription._id})]);
+                            tags.forEach(tag => {
+                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {callback: tag})]);
                             });
                             let replyMarkup = bot.inlineKeyboard(buttons);
-                            console.log(replyMarkup);
-                            return bot.sendMessage(msg.chat.id, 'Tags', {replyMarkup});
+                            bot.sendMessage(msg.chat.id, 'Tags', {replyMarkup});
+                            notifyUser(msg, subs);
                         })
                         .catch(error => {});
             }
