@@ -8,7 +8,9 @@ const bot = new TeleBot({
 
 let telegram = function(){
     let lastMessage;
+    let botObject;
     bot.start();
+    bot.getMe().then(b => {botObject = b});
     const joinedUserController = require('../controllers/JoinedUserController')();
     const userController = require('../controllers/UserController')();
     const messageController = require('../controllers/MessageController')();
@@ -93,10 +95,9 @@ let telegram = function(){
                     subscriptionController
                         .GetTagsSubscriptions(tags)
                         .then(subs => {
-                            const botName = bot.getMe().username;
                             var buttons = [];
                             tags.forEach(tag => {
-                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botName}?start=${tag}`})]);
+                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botObject.username}?start=${tag}`})]);
                             });
                             let replyMarkup = bot.inlineKeyboard(buttons);
                             bot.sendMessage(msg.chat.id, 'Subscribe to:', {replyMarkup});
