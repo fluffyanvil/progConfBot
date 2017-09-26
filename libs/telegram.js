@@ -84,6 +84,7 @@ let telegram = function(){
 
     let processMessage = (msg) => {
         let text = (msg.caption === null || msg.caption === undefined) ? msg.text : msg.caption;
+        text = decodeURIComponent(text);
         if (text !== null){
             messageController.OnNewMessage(msg);
             userController.OnNewMessage(msg);
@@ -97,7 +98,8 @@ let telegram = function(){
                         .then(subs => {
                             var buttons = [];
                             tags.forEach(tag => {
-                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botObject.username}?start=${tag}`})]);
+                                let uri_enc = encodeURIComponent(tag);
+                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botObject.username}?start=${uri_enc}`})]);
                             });
                             let replyMarkup = bot.inlineKeyboard(buttons);
                             bot.sendMessage(msg.chat.id, 'Subscribe to:', {replyMarkup});
@@ -156,9 +158,8 @@ let telegram = function(){
     });
 
     bot.on('newChatMembers', function(msg){
-        const botId = bot.getMe().id;
         const user = msg.new_chat_member;
-        if (user.id === botId)
+        if (user.id === botObject.id)
             return;
         let message = '*У нас новый участник!*\n';
         message = message.concat(`*Ohayō gozaimasu,* [${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
@@ -176,9 +177,8 @@ let telegram = function(){
     });
 
     bot.on('leftChatMember', (msg) => {
-        const botId = bot.getMe().id;
         const user = msg.left_chat_member;
-        if (user.id === botId)
+        if (user.id === botObject.id)
             return;
         let message = '*Нас покинул* ';
         message = message.concat(`[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
