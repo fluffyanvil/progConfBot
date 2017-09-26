@@ -94,6 +94,13 @@ let telegram = function(){
                         .GetTagsSubscriptions(tags)
                         .then(subs => {
                             notifyUser(msg, subs);
+                            var buttons = [];
+                            subs.forEach(subscription => {
+                                buttons.push([bot.inlineButton(`${subscription.tag}`, {callback: subscription._id})]);
+                            });
+                            let replyMarkup = bot.inlineKeyboard(buttons);
+                            console.log(replyMarkup);
+                            return bot.sendMessage(msg.from.id, 'Your subs', {replyMarkup});
                         })
                         .catch(error => {});
             }
@@ -135,7 +142,12 @@ let telegram = function(){
     });
 
     bot.on('callbackQuery', msg => {
-        deleteSubscription(msg, msg.data);
+        const chatType = msg.chat.type;
+        if (chatType === 'private')
+        {
+            deleteSubscription(msg, msg.data);
+        }
+
     });
 
     bot.on('sticker', function(msg){
