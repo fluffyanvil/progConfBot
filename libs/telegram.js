@@ -150,12 +150,7 @@ let telegram = function(){
     });
 
     bot.on('callbackQuery', msg => {
-        const chatType = msg.chat.type;
-        if (chatType === 'private')
-        {
-            deleteSubscription(msg, msg.data);
-        }
-
+        deleteSubscription(msg, msg.data);
     });
 
     bot.on('sticker', function(msg){
