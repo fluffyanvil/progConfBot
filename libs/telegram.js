@@ -2,6 +2,7 @@
  * Created by admin on 5/16/2017.
  */
 const TeleBot = require('telebot');
+const punycode = require('punycode');
 const bot = new TeleBot({
     token: process.env.TELEGRAM
 });
@@ -84,7 +85,10 @@ let telegram = function(){
 
     let processMessage = (msg) => {
         let text = (msg.caption === null || msg.caption === undefined) ? msg.text : msg.caption;
-        text = decodeURIComponent(text);
+        if (text.startsWith('/start'))
+        {
+            text = `#${punycode.decode(text.split(' ')[1])}`;
+        }
         if (text !== null){
             messageController.OnNewMessage(msg);
             userController.OnNewMessage(msg);
@@ -97,9 +101,10 @@ let telegram = function(){
                         .GetTagsSubscriptions(tags)
                         .then(subs => {
                             var buttons = [];
+
                             tags.forEach(tag => {
-                                let uri_enc = encodeURIComponent(tag);
-                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botObject.username}?start=${uri_enc}`})]);
+
+                                buttons.push([bot.inlineButton(`Subscribe: ${tag}`, {url: `https://telegram.me/${botObject.username}?start=${punycode.encode(tag.substr(1))}`})]);
                             });
                             let replyMarkup = bot.inlineKeyboard(buttons);
                             bot.sendMessage(msg.chat.id, 'Subscribe to:', {replyMarkup});
@@ -111,7 +116,7 @@ let telegram = function(){
             {
                 if (tags === undefined || tags === null || tags.length === 0)
                     return bot.sendMessage(msg.from.id, 'use #hashtags');
-                subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
+                    subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
                     .then(() => {
                         setTimeout(function () {
                             getSubscriptions(msg);
@@ -122,7 +127,7 @@ let telegram = function(){
                     });
             }
         }
-    }
+    };
 
     bot.on('edit', (msg) => {
         processMessage(msg);

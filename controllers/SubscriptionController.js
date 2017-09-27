@@ -79,7 +79,6 @@ module.exports = function () {
                 });
         });
     };
-
     module.RemoveSubscription = function(id){
         return new Promise((resolve, reject) => {
             SubscriptionModel.remove({ _id : id }, function (error) {
