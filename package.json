@@ -16,6 +16,7 @@
     "mongoose": "^4.9.9",
     "pug": "^2.0.0-rc.1",
     "punycode": "^2.1.0",
-    "telebot": "^1.2.3"
+    "telebot": "^1.2.3",
+    "underscore": "^1.8.3"
   }
 }

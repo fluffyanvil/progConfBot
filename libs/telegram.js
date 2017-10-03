@@ -1,6 +1,7 @@
 /**
  * Created by admin on 5/16/2017.
  */
+const _ = require('underscore');
 const TeleBot = require('telebot');
 const punycode = require('punycode');
 const bot = new TeleBot({
@@ -94,9 +95,24 @@ let telegram = function(){
             userController.OnNewMessage(msg);
             chatController.OnNewMessage(msg);
             let chatType = msg.chat.type;
-            let tags = text.match(/#([^\s]*)/g);
+            var tags = [];
+            var entities = msg.entities;
+
+            if (entities !== null && entities !== undefined)
+            {
+                var hashtags = _.filter(entities, function(e){ return e.type ==="hashtag"; });
+
+
+                hashtags.forEach(h => {
+                    var tag = text.substr(h.offset, h.length);
+                    tags.push(tag);
+                })
+            }
+
+
+
             if ((chatType === 'group' || chatType ==='supergroup')){
-                if (tags !== null)
+                if (tags !== null && tags !== undefined && tags.length > 0)
                     subscriptionController
                         .GetTagsSubscriptions(tags)
                         .then(subs => {
