@@ -31,7 +31,6 @@ let telegram = function(){
                         buttons.push([bot.inlineButton(`${subscription.tag} 🗑`, {callback: subscription._id})]);
                     });
                     let replyMarkup = bot.inlineKeyboard(buttons);
-                    console.log(replyMarkup);
                     return bot.sendMessage(msg.from.id, 'Your subs', {replyMarkup});
                 }
             })
@@ -95,23 +94,20 @@ let telegram = function(){
             userController.OnNewMessage(msg);
             chatController.OnNewMessage(msg);
             let chatType = msg.chat.type;
-            var tags = [];
-            var entities = msg.entities;
-
-            if (entities !== null && entities !== undefined)
-            {
-                var hashtags = _.filter(entities, function(e){ return e.type ==="hashtag"; });
-
-
-                hashtags.forEach(h => {
-                    var tag = text.substr(h.offset, h.length);
-                    tags.push(tag);
-                })
-            }
-
 
 
             if ((chatType === 'group' || chatType ==='supergroup')){
+                var tags = [];
+                var entities = msg.entities;
+
+                if (entities !== null && entities !== undefined)
+                {
+                    var hashtags = _.filter(entities, function(e){ return e.type ==="hashtag"; });
+                    hashtags.forEach(h => {
+                        var tag = text.substr(h.offset, h.length);
+                        tags.push(tag);
+                    })
+                }
                 if (tags !== null && tags !== undefined && tags.length > 0)
                     subscriptionController
                         .GetTagsSubscriptions(tags)
@@ -130,9 +126,10 @@ let telegram = function(){
             }
             if (chatType === 'private')
             {
-                if (tags === undefined || tags === null || tags.length === 0)
+                if (text === null)
                     return bot.sendMessage(msg.from.id, 'use #hashtags');
-                    subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
+                let tags = [text];
+                subscriptionController.AddSubscriptions(msg.from.id, msg.chat.id, msg.from.first_name, msg.chat.title, tags)
                     .then(() => {
                         setTimeout(function () {
                             getSubscriptions(msg);
