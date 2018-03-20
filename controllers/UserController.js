@@ -19,5 +19,16 @@ module.exports = function () {
             if (err) console.log(err);
         });
     };
+
+    module.GetAll = () => {
+        return new Promise((resolve, reject) => {
+            UserModel.find({}, (err, result) => {
+                if (err) reject(Error(err));
+
+                resolve(result);
+            })
+        })
+    };
+
     return module;
-}
+};

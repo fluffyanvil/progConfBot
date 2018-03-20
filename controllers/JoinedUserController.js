@@ -1,12 +1,12 @@
 /**
  * Created by admin on 9/11/2017.
  */
-var JoinedUserModel = require('../models/JoinedUserModel').JoinedUserModel;
-var moment = require('moment');
+const JoinedUserModel = require('../models/JoinedUserModel').JoinedUserModel;
+const moment = require('moment');
 module.exports = function () {
     module = {};
     module.OnUserJoined = function(msg){
-        var joinedUser = msg.new_chat_member;
+        let joinedUser = msg.new_chat_member;
         JoinedUserModel
             .findOneAndUpdate({
                 id: joinedUser.id
@@ -24,27 +24,23 @@ module.exports = function () {
             });
     };
 
-    module.OnUserMarkAsAlive = function (userId) {
-        return new Promise((resolve, reject) =>{
-
+    module.GetLastJoinedUsers = function(chatId, count){
+        return new Promise((resolve, reject) => {
+            JoinedUserModel
+                .find({
+                    chatId: chatId
+                })
+                .sort({joinDate: -1})
+                .limit(count)
+                .exec(function(error, users){
+                    if (error) {
+                        reject(Error(error));
+                    }
+                    else {
+                        resolve(users);
+                    }
+                });
         });
     };
-
-    module.GetLastJoinedUsers = function(chatId, count, callback){
-        JoinedUserModel
-            .find({
-                chatId: chatId
-            })
-            .sort({joinDate: -1})
-            .limit(count)
-            .exec(function(error, users){
-                if (error) {
-                    callback(null, err)
-                }
-                else {
-                    callback(users, null);
-                }
-            });
-    };
     return module;
-}
+};

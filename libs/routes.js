@@ -1,214 +1,110 @@
 /**
  * Created by admin on 5/21/2017.
  */
-var mongo = require('./mongo');
-var moment = require('moment');
-var packageInfo = require('./../package.json');
-var config = require('../config');
+const moment = require('moment');
+const packageInfo = require('./../package.json');
 
 module.exports = function(app){
+    const messagesController = require('../controllers/MessageController')();
+    const stickersController = require('../controllers/StickerController')();
+    const joinedUsersController = require('../controllers/JoinedUserController')();
+    const usersController = require('../controllers/UserController')();
     app.set('view engine', 'pug');
     app.get('/', function (req, res) {
         res.json({ version: packageInfo.version });
     });
 
-    app.get('/api/messages/:chat', function(req,res){
-        mongo.Message.find({chat: req.params.chat}, function (err, doc){
-            if (err) {
-                console.log(err);
-                return;
-            }
-            res.json(doc);
-        });
+    // new api
+    app.get('/api2/users/last/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        joinedUsersController
+            .GetLastJoinedUsers(chatId, 5)
+            .then(users => {
+                res.json(users);
+            })
+            .catch(err => {
+                res.status(500).send({ error: err })
+            })
     });
 
-    app.get('/api/users/name/:username', function(req,res){
-        mongo.User.findOne({username: req.params.username}, function (err, doc){
-            if (err) {
-                console.log(err);
-                return;
-            }
-            res.json(doc);
-        });
-    });
-
-    app.get('/api/users/id/:id', function(req,res){
-        mongo.User.findOne({id: req.params.id}, function (err, doc){
-            if (err) {
-                console.log(err);
-                return;
-            }
-            res.json(doc);
-        });
-    });
-
-// {id: Number, chat: String}
-    app.get('/api/stat/:id/:chat',  function(req,res){
-        mongo.User.findOne({id: req.params.id}, function (err, user){
-            if (err) {
-                console.log(err);
-                return;
-            }
-            var response = {};
-            response.user = user;
-            mongo.Message.find({})
-                .where('userId').equals(req.params.id)
-                .where('chat').equals(req.params.chat)
-                .exec(function (err, count){
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    response.messages = count.length;
-                    res.json(response)});
-        });
-    });
-
-    app.get('/api/users/chat/:chat', function(req,res){
-        mongo.Message
-            .find({})
-            .where('chat').equals(req.params.chat)
-            .distinct('userId')
-            .exec(function (err, ids){
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                // res.json(doc);
-                mongo.User.find({id: {$in: ids}}, function(err, users){
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    res.json(users);
-                });
+    app.get('/api2/:type/total/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        controller
+            .Count(chatId)
+            .then(count => {
+                res.json({'total' : count});
+            })
+            .catch(err => {
+                res.status(500).send({ error: err })
             });
     });
 
-    app.get('/api/messages/top3/:chat', function(req,res){
-        mongo.TopByChatName(req.params.chat, function(result, err){
-            if (err) {
-                console.log(err);
-            }
-            res.json(result);
-        })
+    app.get('/api2/:type/stat/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        const today = moment.utc().startOf('day');
+        const yesterday = moment.utc().add(-1, 'days').startOf('day');
+        let stat = {};
+        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+
+        controller
+            .Count(chatId, today, null)
+            .then(t => {
+                stat.todayCount = t;
+            })
+            .then(() => controller.Count(chatId, yesterday, today))
+            .then(y => {
+                stat.yesterdayCount = y;
+                if (y > 0)
+                    stat.percentage = Math.round((stat.todayCount / stat.yesterdayCount) * 100);
+                stat.trend = stat.yesterdayCount > stat.todayCount ? -1 : (stat.yesterdayCount < stat.todayCount ? 1 : 0);
+                res.json(stat);
+            })
+            .catch(err => {
+                res.status(500).send({ error: err })
+            });
     });
 
-    app.get('/api/messages/stat/:chat', function(req,res){
-        mongo.StatByChatName(req.params.chat, function(result, error){
-            console.log(result);
-            res.json(result);
-        });
+    app.get('/api2/:type/trend/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        const startDate = moment.utc().add(-1, 'months').startOf('day').format();
+
+        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        controller
+            .Stat(chatId, startDate)
+            .then(stat => {
+                res.json(stat)
+            })
+            .catch(err => {
+                res.status(500).send({ error: err })
+            })
     });
 
-    app.get(`${config.apiRoot}${config.apiTodayActivity}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.TotalTodayByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
+    app.get('/api2/:type/top/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        const controller = req.params.type === 'messages' ? messagesController : stickersController;
 
-    app.get(`${config.apiRoot}${config.apiTotalActivity}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.TotalByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
+        let entities;
 
-    app.get(`${config.apiRoot}${config.apiMessagesStat}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.StatMessagesByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
-
-    app.get(`${config.apiRoot}${config.apiStickersStat}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.StatStickersByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
-
-    app.get(`${config.apiRoot}${config.apiMessagesByUserStat}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.TopMessagesByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
-
-    app.get(`${config.apiRoot}${config.apiStickersByUserStat}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.TopStickersByChatId(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
-
-    app.get(`${config.apiRoot}${config.apiLastUsersJoined}:chatId`, function (req, res) {
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.LastJoinedUsers(req.params.chatId, function(result, error){
-            if (error){
-                res.status(500).send({ error: 'Something failed!' })
-            }
-            else{
-                res.json(result);
-            }
-        });
-    });
-
-    app.get(`${config.apiStat}:chatId`, function(req,res){
-        req.params.chatId = parseInt(req.params.chatId);
-        mongo.StatMessagesByChatId(req.params.chatId, function(stat, error){
-            mongo.StatStickersByChatId(req.params.chatId, function(stickers, error){
-                mongo.TopMessagesByChatId(req.params.chatId, function(pie, error){
-                    mongo.TopStickersByChatId(req.params.chatId, function(stickersTop, error){
-                        mongo.TotalByChatId(req.params.chatId, function(allTimeTotalResult, error){
-                            mongo.TotalTodayByChatId(req.params.chatId, function(dailyTotalResult, error){
-                                res.render('stat', {
-                                    title: 'Statistics',
-                                    message: `${req.params.chat} statistics`,
-                                    statMessagesInChat: stat,
-                                    statMessagesByUser: pie,
-                                    allTotal: allTimeTotalResult,
-                                    dailyTotal: dailyTotalResult,
-                                    statStickersInChat: stickers,
-                                    statStickersByUser: stickersTop,
-                                    ogUrl: `${config.herokuUrl}${config.apiStat}${req.params.chatId}`
-                                });
-                            });
-                        });
+        controller
+            .Top(chatId)
+            .then(result => {
+                entities = result;
+            })
+            .then(() => usersController.GetAll())
+            .then(users => {
+                entities.forEach(message => {
+                    const u = users.find(user => {
+                        return user.id === message._id;
                     });
+                    message.username = u.username;
+                    message.firstName = u.firstName;
+                    message.lastName = u.lastName;
                 });
+                res.json(entities);
+            })
+            .catch(err => {
+                res.status(500).send({ error: err })
             });
-        });
     });
-}
+};
