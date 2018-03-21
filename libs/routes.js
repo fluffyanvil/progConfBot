@@ -29,7 +29,7 @@ module.exports = function(app){
 
     app.get('/api2/:type/total/:chatId', (req, res) => {
         const chatId = parseInt(req.params.chatId);
-        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        const controller = req.params.type.toLowerCase() === 'messages' ? messagesController : stickersController;
         controller
             .Count(chatId)
             .then(count => {
@@ -45,7 +45,7 @@ module.exports = function(app){
         const today = moment.utc().startOf('day');
         const yesterday = moment.utc().add(-1, 'days').startOf('day');
         let stat = {};
-        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        const controller = req.params.type.toLowerCase() === 'messages' ? messagesController : stickersController;
 
         controller
             .Count(chatId, today, null)
@@ -69,7 +69,7 @@ module.exports = function(app){
         const chatId = parseInt(req.params.chatId);
         const startDate = moment.utc().add(-1, 'months').startOf('day').format();
 
-        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        const controller = req.params.type.toLowerCase() === 'messages' ? messagesController : stickersController;
         controller
             .Stat(chatId, startDate)
             .then(stat => {
@@ -82,7 +82,7 @@ module.exports = function(app){
 
     app.get('/api2/:type/top/:chatId', (req, res) => {
         const chatId = parseInt(req.params.chatId);
-        const controller = req.params.type === 'messages' ? messagesController : stickersController;
+        const controller = req.params.toLowerCase() === 'messages' ? messagesController : stickersController;
 
         let entities;
 
