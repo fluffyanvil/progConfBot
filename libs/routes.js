@@ -82,7 +82,7 @@ module.exports = function(app){
 
     app.get('/api2/:type/top/:chatId', (req, res) => {
         const chatId = parseInt(req.params.chatId);
-        const controller = req.params.toLowerCase() === 'messages' ? messagesController : stickersController;
+        const controller = req.params.type.toLowerCase() === 'messages' ? messagesController : stickersController;
 
         let entities;
 
