@@ -9,12 +9,22 @@ module.exports = function(app){
     const stickersController = require('../controllers/StickerController')();
     const joinedUsersController = require('../controllers/JoinedUserController')();
     const usersController = require('../controllers/UserController')();
+    const chatController = require('../controllers/ChatController')();
+
     app.set('view engine', 'pug');
     app.get('/', function (req, res) {
         res.json({ version: packageInfo.version });
     });
 
     // new api
+    app.get('/api2/chats/:chatId', (req, res) => {
+        const chatId = parseInt(req.params.chatId);
+        chatController
+            .Get(chatId)
+            .then(chat => res.json(chat))
+            .catch(err => res.status(500).send({ error: err }));
+    });
+
     app.get('/api2/users/last/:chatId', (req, res) => {
         const chatId = parseInt(req.params.chatId);
         joinedUsersController

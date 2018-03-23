@@ -4,7 +4,8 @@
 var mongoose = require('mongoose');
 var chatSchema = mongoose.Schema({
     id: Number,
-    title: String
+    title: String,
+    username: String
 });
 var ChatModel = mongoose.model('Chat', chatSchema);
 module.exports = {
