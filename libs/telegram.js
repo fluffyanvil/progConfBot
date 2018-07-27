@@ -179,6 +179,10 @@ let telegram = function(){
         message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
         message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
         message = message.concat('#all');
+
+
+        if (user.id === 476249930)
+            message = 'Ты опять выходишь на связь, мудило?'
         joinedUserController.OnUserJoined(msg);
         subscriptionController
             .GetTagsSubscriptions(['#all'])
