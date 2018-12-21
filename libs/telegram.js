@@ -174,23 +174,32 @@ let telegram = function(){
         const user = msg.new_chat_member;
         if (user.id === botObject.id)
             return;
-        let message = '*У нас новый участник!*\n';
-        message = message.concat(`*Ohayō gozaimasu,* [${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
-        message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
-        message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
-        message = message.concat('#all');
 
-
-        if (user.id === 476249930)
-            message = 'Ты опять выходишь на связь, мудило?'
-        joinedUserController.OnUserJoined(msg);
-        subscriptionController
-            .GetTagsSubscriptions(['#all'])
-            .then(subs => {
-                notifyUser(msg, subs);
-            })
-            .catch(error => {});
-        return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
+        userController.Exist(user.id).then(exist => {
+            let message = ''
+            if (!exist) {
+                message = '*У нас новый участник!*\n';
+                message = message.concat(`*Ohayō gozaimasu,* [${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
+                message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
+                message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
+                message = message.concat('#all');
+            } else {
+                message = 'С возвращением, ';
+                message = message.concat(`[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
+            }
+            if (user.id === 476249930) {
+                message = 'Ты опять выходишь на связь, мудило?'
+            }
+            
+            joinedUserController.OnUserJoined(msg);
+            subscriptionController
+                .GetTagsSubscriptions(['#all'])
+                .then(subs => {
+                    notifyUser(msg, subs);
+                })
+                .catch(error => {});
+            return bot.sendMessage(msg.chat.id, message, {parseMode:'Markdown'});
+        })
     });
 
     bot.on('leftChatMember', (msg) => {
@@ -199,7 +208,7 @@ let telegram = function(){
             return;
         let message = '*Нас покинул* ';
         message = message.concat(`[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
-        message = message.concat('*Аминь😢*\n');
+        message = message.concat('*Помянем...*\n');
         message = message.concat('#all');
         subscriptionController
             .GetTagsSubscriptions(['#all'])

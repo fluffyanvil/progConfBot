@@ -20,6 +20,16 @@ module.exports = function () {
         });
     };
 
+    module.Exist = (id) => {
+        return UserModel.find({id: id}).then(user => {
+            if (!user) {
+                return Promise.resolve(false)
+            } else {
+                return Promise.resolve(true)
+            }
+        })
+    }
+
     module.GetAll = () => {
         return new Promise((resolve, reject) => {
             UserModel.find({}, (err, result) => {
