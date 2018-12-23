@@ -177,15 +177,16 @@ let telegram = function(){
 
         userController.Exist(user.id).then(exist => {
             let message = ''
+            const mention = `[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`
             if (!exist) {
                 message = '*У нас новый участник!*\n';
-                message = message.concat(`*Ohayō gozaimasu,* [${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
+                message = message.concat(`*Ohayō gozaimasu,* ${mention}`);
                 message = message.concat('*Каковы твои возраст, стек технологий, зп,* _ориентация_*?*\n');
                 message = message.concat('*Кем видишь себя через 5 лет сидения в этом чате?*\n');
                 message = message.concat('#all');
             } else {
                 message = 'С возвращением, ';
-                message = message.concat(`[${ (user.first_name === null || user.first_name === undefined) ? '' : user.first_name }${ (user.last_name === null || user.last_name === undefined) ? '' : ' ' + user.last_name }](tg://user?id=${user.id})!\n`);
+                message = message.concat(mention);
             }
             if (user.id === 476249930) {
                 message = 'Ты опять выходишь на связь, мудило?'
